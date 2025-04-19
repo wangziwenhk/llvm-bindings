@@ -374,8 +374,6 @@ declare namespace llvm {
 
         public getPrimitiveSizeInBits(): number;
 
-        public getPointerElementType(): Type;
-
         // extra
         public static isSameType(type1: Type, type2: Type): boolean;
 
@@ -515,9 +513,6 @@ declare namespace llvm {
 
         // duplicated
         public getTypeID(): number;
-
-        // duplicated
-        public getPointerElementType(): Type;
 
         protected constructor();
     }
@@ -688,6 +683,8 @@ declare namespace llvm {
     }
 
     class ConstantExpr extends Constant {
+        // public static getAdd(c1: llvm.Constant, c2: llvm.Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getBitCast(constant: Constant, type: Type): Constant;
 
         // duplicated

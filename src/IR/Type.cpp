@@ -129,7 +129,6 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
             InstanceMethod("isAggregateType", &Type::isTypeFactory<&llvm::Type::isAggregateType>),
             InstanceMethod("getPointerTo", &Type::getPointerTo),
             InstanceMethod("getPrimitiveSizeInBits", &Type::getPrimitiveSizeInBits),
-            InstanceMethod("getPointerElementType", &Type::getPointerElementType),
             StaticMethod("isSameType", &Type::isSameType)
     });
     constructor = Napi::Persistent(func);
@@ -219,52 +218,100 @@ Napi::Value Type::isIntegerTy(const Napi::CallbackInfo &info) {
     return Napi::Boolean::New(env, result);
 }
 
-Napi::Value Type::getPointerElementType(const Napi::CallbackInfo &info) {
-    return Type::New(info.Env(), type->getPointerElementType());
-}
-
-static bool isSameType(llvm::Type *type1, llvm::Type *type2) {
+static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
+    // Handle null cases
     if (type1 == nullptr || type2 == nullptr) {
         return type1 == type2;
     }
+ 
+    // Check if TypeIDs match
     if (type1->getTypeID() != type2->getTypeID()) {
         return false;
     }
-    if (type1->isIntegerTy()) {
-        return type1->getIntegerBitWidth() == type2->getIntegerBitWidth();
-    } else if (type1->isFunctionTy()) {
-        auto *funcType1 = llvm::cast<llvm::FunctionType>(type1);
-        auto *funcType2 = llvm::cast<llvm::FunctionType>(type2);
-        if (!isSameType(funcType1->getReturnType(), funcType2->getReturnType())) {
-            return false;
-        }
-        unsigned numParams = funcType1->getNumParams();
-        if (numParams != funcType2->getNumParams()) {
-            return false;
-        }
-        for (unsigned i = 0; i < numParams; ++i) {
-            if (!isSameType(funcType1->getParamType(i), funcType2->getParamType(i))) {
+ 
+    // Handle specific type categories
+    switch (type1->getTypeID()) {
+        case llvm::Type::IntegerTyID:
+            return type1->getIntegerBitWidth() == type2->getIntegerBitWidth();
+ 
+        case llvm::Type::FunctionTyID: {
+            auto* funcType1 = llvm::cast<llvm::FunctionType>(type1);
+            auto* funcType2 = llvm::cast<llvm::FunctionType>(type2);
+ 
+            // Compare return types
+            if (!isSameType(funcType1->getReturnType(), funcType2->getReturnType())) {
                 return false;
             }
-        }
-    } else if (type1->isPointerTy()) {
-        return isSameType(type1->getPointerElementType(), type2->getPointerElementType());
-    } else if (type1->isStructTy()) {
-        unsigned numElements = type1->getStructNumElements();
-        if (numElements != type2->getStructNumElements()) {
-            return false;
-        }
-        for (unsigned i = 0; i < numElements; ++i) {
-            if (!isSameType(type1->getStructElementType(i), type2->getStructElementType(i))) {
+ 
+            // Compare number of parameters
+            if (funcType1->getNumParams() != funcType2->getNumParams()) {
                 return false;
             }
+ 
+            // Compare parameter types
+            for (unsigned i = 0; i < funcType1->getNumParams(); ++i) {
+                if (!isSameType(funcType1->getParamType(i), funcType2->getParamType(i))) {
+                    return false;
+                }
+            }
+            return true;
         }
-    } else if (type1->isArrayTy()) {
-        return isSameType(type1->getArrayElementType(), type2->getArrayElementType());
+ 
+        case llvm::Type::PointerTyID: {
+            // For LLVM 15+ with opaque pointers, compare address spaces
+            auto* ptrType1 = llvm::cast<llvm::PointerType>(type1);
+            auto* ptrType2 = llvm::cast<llvm::PointerType>(type2);
+            return ptrType1->getAddressSpace() == ptrType2->getAddressSpace();
+        }
+ 
+        case llvm::Type::StructTyID: {
+            auto* structType1 = llvm::cast<llvm::StructType>(type1);
+            auto* structType2 = llvm::cast<llvm::StructType>(type2);
+ 
+            // Compare number of elements
+            if (structType1->getNumElements() != structType2->getNumElements()) {
+                return false;
+            }
+ 
+            // Compare element types
+            for (unsigned i = 0; i < structType1->getNumElements(); ++i) {
+                if (!isSameType(structType1->getElementType(i), structType2->getElementType(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+ 
+        case llvm::Type::ArrayTyID:
+            return isSameType(type1->getArrayElementType(), type2->getArrayElementType());
+
+            case llvm::Type::FixedVectorTyID: {
+                auto* vecType1 = llvm::cast<llvm::FixedVectorType>(type1);
+                auto* vecType2 = llvm::cast<llvm::FixedVectorType>(type2);
+                
+                if (!isSameType(vecType1->getElementType(), vecType2->getElementType())) {
+                    return false;
+                }
+                
+                return vecType1->getNumElements() == vecType2->getNumElements();
+            }
+    
+            case llvm::Type::ScalableVectorTyID: {
+                auto* vecType1 = llvm::cast<llvm::ScalableVectorType>(type1);
+                auto* vecType2 = llvm::cast<llvm::ScalableVectorType>(type2);
+                
+                if (!isSameType(vecType1->getElementType(), vecType2->getElementType())) {
+                    return false;
+                }
+                
+                return vecType1->getMinNumElements() == vecType2->getMinNumElements();
+            }
+ 
+        default:
+            // Handle other types (e.g., float, double, void) that don't require further comparison
+            return true;
     }
-    // TODO: not support vector type
-    return true;
-}
+ }
 
 Napi::Value Type::isSameType(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
