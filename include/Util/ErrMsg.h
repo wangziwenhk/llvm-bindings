@@ -148,6 +148,11 @@ namespace ErrMsg {
         namespace ConstantExpr {
             constexpr const char *constructor = "ConstantExpr.constructor needs to be called with new (external: Napi::External<llvm::ConstantExpr>)";
             constexpr const char *getBitCast = "ConstantExpr.getBitCast needs to be called with (constant: Constant, type: Type)";
+            constexpr const char *getAdd = "ConstantExpr.getAdd needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
+            constexpr const char *getSub = "ConstantExpr.getSub needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
+            constexpr const char *getMul = "ConstantExpr.getMul needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
+            constexpr const char *getXor = "ConstantExpr.getXor needs to be called with (c1: Constant, c2: Constant)";
+            constexpr const char *getNeg = "ConstantExpr.getNeg needs to be called with (constant: Constant, hasNUW?: boolean, hasNSW?: boolean)";
         }
         namespace UndefValue {
             constexpr const char *constructor = "UndefValue.constructor needs to be called with new (external: Napi::External<llvm::UndefValue>)";

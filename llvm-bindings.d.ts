@@ -683,7 +683,11 @@ declare namespace llvm {
     }
 
     class ConstantExpr extends Constant {
-        // public static getAdd(c1: llvm.Constant, c2: llvm.Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+        public static getAdd(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+        public static getSub(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+        public static getMul(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+        public static getXor(c1: Constant, c2: Constant): Constant;
+        public static getNeg(constant: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
 
         public static getBitCast(constant: Constant, type: Type): Constant;
 

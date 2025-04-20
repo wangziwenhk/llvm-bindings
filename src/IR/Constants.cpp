@@ -575,6 +575,11 @@ void ConstantExpr::Init(Napi::Env env, Napi::Object &exports) {
     Napi::Function func = DefineClass(env, "ConstantExpr", {
             // TODO: need more methods by use of factory mode
             StaticMethod("getBitCast", &ConstantExpr::getBitCast),
+            StaticMethod("getAdd", &ConstantExpr::getAdd),
+            StaticMethod("getSub", &ConstantExpr::getSub),
+            StaticMethod("getMul", &ConstantExpr::getMul),
+            StaticMethod("getXor", &ConstantExpr::getXor),
+            StaticMethod("getNeg", &ConstantExpr::getNeg),
             InstanceMethod("getType", &ConstantExpr::getType)
     });
     constructor = Napi::Persistent(func);
@@ -621,7 +626,96 @@ Napi::Value ConstantExpr::getBitCast(const Napi::CallbackInfo &info) {
     throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getBitCast);
 }
 
-Napi::Value ConstantExpr::getType(const Napi::CallbackInfo &info) {
+Napi::Value ConstantExpr::getAdd(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>4 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getAdd);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool hasNUW = false, hasNSW = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        hasNUW = info[2].As<Napi::Boolean>().Value();
+    if (info.Length() >= 4 && info[3].IsBoolean())
+        hasNSW = info[3].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getAdd(lhs, rhs, hasNUW, hasNSW));
+}
+
+Napi::Value ConstantExpr::getSub(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>4 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getSub);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool hasNUW = false, hasNSW = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        hasNUW = info[2].As<Napi::Boolean>().Value();
+    if (info.Length() >= 4 && info[3].IsBoolean())
+        hasNSW = info[3].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getSub(lhs, rhs, hasNUW, hasNSW));
+}
+
+Napi::Value ConstantExpr::getMul(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>4 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getMul);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool hasNUW = false, hasNSW = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        hasNUW = info[2].As<Napi::Boolean>().Value();
+    if (info.Length() >= 4 && info[3].IsBoolean())
+        hasNSW = info[3].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getMul(lhs, rhs, hasNUW, hasNSW));
+    return Napi::Value();
+}
+
+Napi::Value ConstantExpr::getXor(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length() != 2 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getXor);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    return Constant::New(env, llvm::ConstantExpr::getXor(lhs, rhs));
+}
+
+Napi::Value ConstantExpr::getNeg(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<1 || info.Length()>3 || !info[0].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getNeg);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+
+    bool hasNUW = false, hasNSW = false;
+    if (info.Length() >= 2 && info[1].IsBoolean())
+        hasNUW = info[2].As<Napi::Boolean>().Value();
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        hasNSW = info[3].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getNeg(c,hasNUW, hasNSW));
+}
+
+Napi::Value ConstantExpr::getType(const Napi::CallbackInfo &info)
+{
     return Type::New(info.Env(), constantExpr->getType());
 }
 

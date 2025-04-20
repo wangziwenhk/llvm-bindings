@@ -170,6 +170,16 @@ public:
 private:
     llvm::ConstantExpr *constantExpr = nullptr;
 
+    static Napi::Value getAdd(const Napi::CallbackInfo &info);
+
+    static Napi::Value getSub(const Napi::CallbackInfo &info);
+
+    static Napi::Value getMul(const Napi::CallbackInfo &info);
+
+    static Napi::Value getXor(const Napi::CallbackInfo &info);
+
+    static Napi::Value getNeg(const Napi::CallbackInfo &info);
+
     static Napi::Value getBitCast(const Napi::CallbackInfo &info);
 
     Napi::Value getType(const Napi::CallbackInfo &info);
