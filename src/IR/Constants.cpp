@@ -580,7 +580,24 @@ void ConstantExpr::Init(Napi::Env env, Napi::Object &exports) {
             StaticMethod("getMul", &ConstantExpr::getMul),
             StaticMethod("getXor", &ConstantExpr::getXor),
             StaticMethod("getNeg", &ConstantExpr::getNeg),
-            InstanceMethod("getType", &ConstantExpr::getType)
+            StaticMethod("getFNeg",&ConstantExpr::getFNeg),
+            StaticMethod("getNot",&ConstantExpr::getNot),
+            StaticMethod("getAlignOf",&ConstantExpr::getAlignOf),
+            StaticMethod("getSizeOf",&ConstantExpr::getSizeOf),
+            StaticMethod("getOffsetOf",&ConstantExpr::getOffsetOf),
+            StaticMethod("getAnd",&ConstantExpr::getAnd),
+            StaticMethod("getOr",&ConstantExpr::getOr),
+            StaticMethod("getUMin",&ConstantExpr::getUMin),
+            StaticMethod("getShl",&ConstantExpr::getShl),
+            StaticMethod("getLShr",&ConstantExpr::getLShr),
+            StaticMethod("getAShr",&ConstantExpr::getAShr),
+            StaticMethod("getTrunc",&ConstantExpr::getTrunc),
+            StaticMethod("getSExt",&ConstantExpr::getSExt),
+            StaticMethod("getZExt",&ConstantExpr::getZExt),
+            StaticMethod("getFPTrunc",&ConstantExpr::getFPTrunc),
+            StaticMethod("getFPExtend",&ConstantExpr::getFPExtend),
+            StaticMethod("getUIToFP",&ConstantExpr::getUIToFP),
+            InstanceMethod("getType", &ConstantExpr::getType),
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -680,7 +697,6 @@ Napi::Value ConstantExpr::getMul(const Napi::CallbackInfo &info)
         hasNSW = info[3].As<Napi::Boolean>().Value();
 
     return Constant::New(env, llvm::ConstantExpr::getMul(lhs, rhs, hasNUW, hasNSW));
-    return Napi::Value();
 }
 
 Napi::Value ConstantExpr::getXor(const Napi::CallbackInfo &info)
@@ -712,6 +728,282 @@ Napi::Value ConstantExpr::getNeg(const Napi::CallbackInfo &info)
         hasNSW = info[3].As<Napi::Boolean>().Value();
 
     return Constant::New(env, llvm::ConstantExpr::getNeg(c,hasNUW, hasNSW));
+}
+
+Napi::Value ConstantExpr::getFNeg(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if (info.Length() != 1 || !info[0].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getFNeg);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+
+    return Constant::New(env, llvm::ConstantExpr::getFNeg(c));
+}
+
+Napi::Value ConstantExpr::getNot(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if (info.Length() != 1 || !info[0].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getNot);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+
+    return Constant::New(env, llvm::ConstantExpr::getNot(c));
+}
+
+Napi::Value ConstantExpr::getAlignOf(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()!=1 || !info[0].IsObject()){
+        throw Napi::TypeError::New(env,ErrMsg::Class::ConstantExpr::getAlignOf);
+    }
+
+    llvm::Type* type = Type::Extract(info[0]);
+
+    return Constant::New(env,llvm::ConstantExpr::getAlignOf(type));
+}
+
+Napi::Value ConstantExpr::getSizeOf(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()!=1 || !info[0].IsObject()){
+        throw Napi::TypeError::New(env,ErrMsg::Class::ConstantExpr::getSizeOf);
+    }
+
+    llvm::Type* type = Type::Extract(info[0]);
+
+    return Constant::New(env,llvm::ConstantExpr::getSizeOf(type));
+}
+
+Napi::Value ConstantExpr::getOffsetOf(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if (info.Length() != 2 || !info[0].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getOffsetOf);
+    }
+
+    Napi::Object obj0 = info[0].As<Napi::Object>();
+
+    if (obj0.InstanceOf(StructType::constructor.Value()) && info[1].IsNumber())
+    {
+        llvm::StructType *type = StructType::Extract(obj0);
+        unsigned fieldNo = info[1].As<Napi::Number>().Uint32Value();
+        llvm::Constant *c = llvm::ConstantExpr::getOffsetOf(type, fieldNo);
+        return Constant::New(env, c);
+    }
+    else if (obj0.InstanceOf(Type::constructor.Value()) &&
+             info[1].IsObject() &&
+             info[1].As<Napi::Object>().InstanceOf(Constant::constructor.Value()))
+    {
+        llvm::Type *type = Type::Extract(obj0);
+        llvm::Constant *FieldNo = Constant::Extract(info[1]);
+        return Constant::New(env, llvm::ConstantExpr::getOffsetOf(type, FieldNo));
+    }
+
+    throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getOffsetOf);
+}
+
+Napi::Value ConstantExpr::getAnd(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getAnd);
+    }
+
+    llvm::Constant *c1 = Constant::Extract(info[0]);
+    llvm::Constant *c2 = Constant::Extract(info[1]);
+
+    return Constant::New(env, llvm::ConstantExpr::getAnd(c1, c2));
+}
+
+Napi::Value ConstantExpr::getOr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getOr);
+    }
+
+    llvm::Constant *c1 = Constant::Extract(info[0]);
+    llvm::Constant *c2 = Constant::Extract(info[1]);
+
+    return Constant::New(env, llvm::ConstantExpr::getOr(c1, c2));
+}
+
+Napi::Value ConstantExpr::getUMin(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsObject())
+    {
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getOr);
+    }
+
+    llvm::Constant *c1 = Constant::Extract(info[0]);
+    llvm::Constant *c2 = Constant::Extract(info[1]);
+
+    return Constant::New(env, llvm::ConstantExpr::getUMin(c1, c2));
+}
+
+Napi::Value ConstantExpr::getShl(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>4 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getShl);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool hasNUW = false, hasNSW = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        hasNUW = info[2].As<Napi::Boolean>().Value();
+    if (info.Length() >= 4 && info[3].IsBoolean())
+        hasNSW = info[3].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getShl(lhs, rhs, hasNUW, hasNSW));
+}
+
+Napi::Value ConstantExpr::getLShr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getLShr);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool isExact = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        isExact = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getLShr(lhs, rhs, isExact));
+}
+
+Napi::Value ConstantExpr::getAShr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getAShr);
+    }
+
+    llvm::Constant *lhs = Constant::Extract(info[0]);
+    llvm::Constant *rhs = Constant::Extract(info[1]);
+
+    bool isExact = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        isExact = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getAShr(lhs, rhs, isExact));
+}
+
+Napi::Value ConstantExpr::getTrunc(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getTrunc);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getTrunc(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getSExt(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getSExt);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getSExt(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getZExt(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getZExt);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getZExt(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getFPTrunc(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getFPTrunc);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getFPTrunc(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getFPExtend(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getFPExtend);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getFPExtend(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getUIToFP(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getUIToFP);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    if(!type->isFloatingPointTy()){
+        throw Napi::TypeError::New(env, "Target type must be a floating-point type");
+    }
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getUIToFP(c,type, OnlyIfReduced));
 }
 
 Napi::Value ConstantExpr::getType(const Napi::CallbackInfo &info)

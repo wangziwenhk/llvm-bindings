@@ -147,12 +147,31 @@ namespace ErrMsg {
         }
         namespace ConstantExpr {
             constexpr const char *constructor = "ConstantExpr.constructor needs to be called with new (external: Napi::External<llvm::ConstantExpr>)";
+            constexpr const char *getAlignOf = "ConstantExpr.getAlignOf needs to be called with (type: Type)";
+            constexpr const char *getSizeOf = "ConstantExpr.getSizeOf needs to be called with (type: Type)";
+            constexpr const char *getOffsetOf = "ConstantExpr.getOffsetOf needs to be called with:"
+                                                "\n\t - (type: StructType, fieldNo: number)"
+                                                "\n\t - (type: Type, fieldNo: Constant)";
             constexpr const char *getBitCast = "ConstantExpr.getBitCast needs to be called with (constant: Constant, type: Type)";
             constexpr const char *getAdd = "ConstantExpr.getAdd needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
             constexpr const char *getSub = "ConstantExpr.getSub needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
             constexpr const char *getMul = "ConstantExpr.getMul needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
             constexpr const char *getXor = "ConstantExpr.getXor needs to be called with (c1: Constant, c2: Constant)";
             constexpr const char *getNeg = "ConstantExpr.getNeg needs to be called with (constant: Constant, hasNUW?: boolean, hasNSW?: boolean)";
+            constexpr const char *getFNeg = "ConstantExpr.getFNeg needs to be called with (constant: Constant)";
+            constexpr const char *getNot = "ConstantExpr.getNot needs to be called with (constant: Constant)";
+            constexpr const char *getAnd = "ConstantExpr.getAnd needs to be called with (c1: Constant, c2: Constant)";
+            constexpr const char *getOr = "ConstantExpr.getOr needs to be called with (c1: Constant, c2: Constant)";
+            constexpr const char *getUMin = "ConstantExpr.getUMin needs to be called with (c1: Constant, c2: Constant)";
+            constexpr const char *getShl = "ConstantExpr.getShl needs to be called with (c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean)";
+            constexpr const char *getLShr= "ConstantExpr.getLShr needs to be called with (c1: Constant, c2: Constant, isExact?: boolean)";
+            constexpr const char *getAShr= "ConstantExpr.getAShr needs to be called with (c1: Constant, c2: Constant, isExact?: boolean)";
+            constexpr const char *getTrunc= "ConstantExpr.getTrunc needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getSExt= "ConstantExpr.getSExt needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getZExt= "ConstantExpr.getZExt needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getFPTrunc= "ConstantExpr.getFPTrunc needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getFPExtend= "ConstantExpr.getFPExtend needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getUIToFP= "ConstantExpr.getUIToFP needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
         }
         namespace UndefValue {
             constexpr const char *constructor = "UndefValue.constructor needs to be called with new (external: Napi::External<llvm::UndefValue>)";

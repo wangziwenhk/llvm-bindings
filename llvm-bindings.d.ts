@@ -683,12 +683,50 @@ declare namespace llvm {
     }
 
     class ConstantExpr extends Constant {
+        /** 
+         * getAlignOf constant expr - computes the alignment of a type in a target 
+         * independent way (Note: the return type is an i64).
+         */
+        public static getAlignOf(type: Type): Constant;
+
+        /** 
+         * getSizeOf constant expr - computes the (alloc) size of a type (in
+         * address-units, not bits) in a target independent way (Note: the return
+         * type is an i64).  
+         */
+        public static getSizeOf(type: Type): Constant;
+
+        /** 
+         * getOffsetOf constant expr - computes the offset of a struct field in a
+         * target independent way (Note: the return type is an i64).
+         */
+        public static getOffsetOf(type: StructType, fieldNo: number): Constant;
+
+        /** 
+         * getOffsetOf constant expr - This is a generalized form of getOffsetOf,
+         * which supports any aggregate type, and any Constant index.
+         */
+        public static getOffsetOf(tyoe: StructType, fieldNo: Constant): Constant;
+
         public static getAdd(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
         public static getSub(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
         public static getMul(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
         public static getXor(c1: Constant, c2: Constant): Constant;
         public static getNeg(constant: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
-
+        public static getFNeg(constant: Constant): Constant;
+        public static getNot(constant: Constant): Constant;
+        public static getAnd(c1: Constant, c2: Constant): Constant;
+        public static getOr(c1: Constant, c2: Constant): Constant;
+        public static getUMin(c1: Constant, c2: Constant): Constant;
+        public static getShl(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+        public static getLShr(c1: Constant, c2: Constant, isExact?: boolean): Constant;
+        public static getAShr(c1: Constant, c2: Constant, isExact?: boolean): Constant;
+        public static getTrunc(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getSExt(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getZExt(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getFPTrunc(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getFPExtend(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getUIToFP(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
         public static getBitCast(constant: Constant, type: Type): Constant;
 
         // duplicated

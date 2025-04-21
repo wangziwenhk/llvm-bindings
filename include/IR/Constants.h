@@ -170,6 +170,12 @@ public:
 private:
     llvm::ConstantExpr *constantExpr = nullptr;
 
+    static Napi::Value getAlignOf(const Napi::CallbackInfo& info);
+
+    static Napi::Value getSizeOf(const Napi::CallbackInfo& info);
+
+    static Napi::Value getOffsetOf(const Napi::CallbackInfo& info);
+
     static Napi::Value getAdd(const Napi::CallbackInfo &info);
 
     static Napi::Value getSub(const Napi::CallbackInfo &info);
@@ -179,6 +185,34 @@ private:
     static Napi::Value getXor(const Napi::CallbackInfo &info);
 
     static Napi::Value getNeg(const Napi::CallbackInfo &info);
+
+    static Napi::Value getFNeg(const Napi::CallbackInfo& info);
+
+    static Napi::Value getNot(const Napi::CallbackInfo& info);
+
+    static Napi::Value getAnd(const Napi::CallbackInfo& info);
+
+    static Napi::Value getOr(const Napi::CallbackInfo& info);
+
+    static Napi::Value getUMin(const Napi::CallbackInfo& info);
+
+    static Napi::Value getShl(const Napi::CallbackInfo& info);
+
+    static Napi::Value getLShr(const Napi::CallbackInfo& info);
+
+    static Napi::Value getAShr(const Napi::CallbackInfo& info);
+
+    static Napi::Value getTrunc(const Napi::CallbackInfo& info);
+
+    static Napi::Value getSExt(const Napi::CallbackInfo& info);
+
+    static Napi::Value getZExt(const Napi::CallbackInfo& info);
+
+    static Napi::Value getFPTrunc(const Napi::CallbackInfo& info);
+
+    static Napi::Value getFPExtend(const Napi::CallbackInfo& info);
+
+    static Napi::Value getUIToFP(const Napi::CallbackInfo& info);
 
     static Napi::Value getBitCast(const Napi::CallbackInfo &info);
 
