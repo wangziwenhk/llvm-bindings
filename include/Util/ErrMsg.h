@@ -172,6 +172,8 @@ namespace ErrMsg {
             constexpr const char *getFPTrunc= "ConstantExpr.getFPTrunc needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
             constexpr const char *getFPExtend= "ConstantExpr.getFPExtend needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
             constexpr const char *getUIToFP= "ConstantExpr.getUIToFP needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getSIToFP= "ConstantExpr.getSIToFP needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
+            constexpr const char *getFPToUI= "ConstantExpr.getFPToUI needs to be called with (c: Constant, type: Type, OnlyIfReduced?: boolean)";
         }
         namespace UndefValue {
             constexpr const char *constructor = "UndefValue.constructor needs to be called with new (external: Napi::External<llvm::UndefValue>)";

@@ -597,6 +597,8 @@ void ConstantExpr::Init(Napi::Env env, Napi::Object &exports) {
             StaticMethod("getFPTrunc",&ConstantExpr::getFPTrunc),
             StaticMethod("getFPExtend",&ConstantExpr::getFPExtend),
             StaticMethod("getUIToFP",&ConstantExpr::getUIToFP),
+            StaticMethod("getSIToFP",&ConstantExpr::getSIToFP),
+            StaticMethod("getFPToUI",&ConstantExpr::getFPToUI),
             InstanceMethod("getType", &ConstantExpr::getType),
     });
     constructor = Napi::Persistent(func);
@@ -1004,6 +1006,46 @@ Napi::Value ConstantExpr::getUIToFP(const Napi::CallbackInfo& info){
         OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
 
     return Constant::New(env, llvm::ConstantExpr::getUIToFP(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getSIToFP(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getSIToFP);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    if(!type->isFloatingPointTy()){
+        throw Napi::TypeError::New(env, "Target type must be a floating-point type");
+    }
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getSIToFP(c,type, OnlyIfReduced));
+}
+
+Napi::Value ConstantExpr::getFPToUI(const Napi::CallbackInfo& info){
+    Napi::Env env = info.Env();
+    if(info.Length()<2 || info.Length()>3 || !info[0].IsObject() || !info[1].IsObject()){
+        throw Napi::TypeError::New(env, ErrMsg::Class::ConstantExpr::getFPToUI);
+    }
+
+    llvm::Constant *c = Constant::Extract(info[0]);
+    llvm::Type *type = Type::Extract(info[1]);
+
+    // if(!c->getType()->isFloatingPointTy()){
+    //     throw Napi::TypeError::New(env, "Target type must be a floating-point type");
+    // }
+
+    bool OnlyIfReduced = false;
+    if (info.Length() >= 3 && info[2].IsBoolean())
+        OnlyIfReduced = info[2].As<Napi::Boolean>().Value();
+
+    return Constant::New(env, llvm::ConstantExpr::getFPToUI(c,type, OnlyIfReduced));
 }
 
 Napi::Value ConstantExpr::getType(const Napi::CallbackInfo &info)

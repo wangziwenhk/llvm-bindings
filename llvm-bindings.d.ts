@@ -727,6 +727,8 @@ declare namespace llvm {
         public static getFPTrunc(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
         public static getFPExtend(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
         public static getUIToFP(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getSIToFP(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+        public static getFPToUI(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
         public static getBitCast(constant: Constant, type: Type): Constant;
 
         // duplicated
