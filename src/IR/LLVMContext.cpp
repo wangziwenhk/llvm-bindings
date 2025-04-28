@@ -3,7 +3,7 @@
 
 void LLVMContext::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "LLVMContext", {});
+    const Napi::Function func = DefineClass(env, "LLVMContext", {});
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
     exports.Set("LLVMContext", func);
@@ -18,7 +18,7 @@ llvm::LLVMContext &LLVMContext::Extract(const Napi::Value &value) {
 }
 
 LLVMContext::LLVMContext(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::LLVMContext::constructor);
     }

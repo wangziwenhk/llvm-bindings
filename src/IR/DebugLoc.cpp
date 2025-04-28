@@ -3,7 +3,7 @@
 
 void DebugLoc::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "DebugLoc", {
+    const Napi::Function func = DefineClass(env, "DebugLoc", {
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -26,13 +26,13 @@ llvm::DebugLoc *DebugLoc::Extract(const Napi::Value &value) {
 }
 
 DebugLoc::DebugLoc(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 0 && info.IsConstructCall()) {
         location = new llvm::DebugLoc();
         return;
     } else if (argsLen == 1 && info[0].IsExternal()) {
-        auto external = info[0].As<Napi::External<llvm::DebugLoc>>();
+        const auto external = info[0].As<Napi::External<llvm::DebugLoc>>();
         location = external.Data();
         return;
     }

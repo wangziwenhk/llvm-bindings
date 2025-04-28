@@ -7,7 +7,7 @@
 
 void Metadata::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "Metadata", {
+    const Napi::Function func = DefineClass(env, "Metadata", {
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -33,11 +33,11 @@ llvm::Metadata *Metadata::Extract(const Napi::Value &value) {
 }
 
 Metadata::Metadata(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Metadata::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::Metadata>>();
+    const auto external = info[0].As<Napi::External<llvm::Metadata>>();
     metadata = external.Data();
 }
 
@@ -51,7 +51,7 @@ llvm::Metadata *Metadata::getLLVMPrimitive() {
 
 void MDNode::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "MDNode", {
+    const Napi::Function func = DefineClass(env, "MDNode", {
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -84,11 +84,11 @@ llvm::MDNode *MDNode::Extract(const Napi::Value &value) {
 }
 
 MDNode::MDNode(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::MDNode::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::MDNode>>();
+    const auto external = info[0].As<Napi::External<llvm::MDNode>>();
     node = external.Data();
 }
 
@@ -101,7 +101,7 @@ llvm::MDNode *MDNode::getLLVMPrimitive() {
 //===----------------------------------------------------------------------===//
 
 void LLVMConstants::Init(Napi::Env env, Napi::Object &exports) {
-    Napi::Object constantsNS = Napi::Object::New(env);
+    const Napi::Object constantsNS = Napi::Object::New(env);
     constantsNS.Set("DEBUG_METADATA_VERSION", Napi::Number::New(env, llvm::LLVMConstants::DEBUG_METADATA_VERSION));
     exports.Set("LLVMConstants", constantsNS);
 }

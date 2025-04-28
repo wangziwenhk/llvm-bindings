@@ -6,7 +6,7 @@ using WrappedValue = Value;
 
 void IRBuilder::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "IRBuilder", {
+    const Napi::Function func = DefineClass(env, "IRBuilder", {
             //===--------------------------------------------------------------------===//
             // Builder configuration methods
             //===--------------------------------------------------------------------===//
@@ -196,9 +196,9 @@ LLVMIRBuilder *IRBuilder::Extract(const Napi::Value &value) {
 }
 
 IRBuilder::IRBuilder(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.IsConstructCall()) {
-        unsigned argsLen = info.Length();
+        const unsigned argsLen = info.Length();
         if (argsLen == 1) {
             if (LLVMContext::IsClassOf(info[0])) {
                 llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
@@ -231,7 +231,7 @@ void IRBuilder::ClearInsertionPoint(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::GetInsertBlock(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::BasicBlock *basicBlock = builder->GetInsertBlock();
     if (basicBlock) {
         return BasicBlock::New(env, basicBlock);
@@ -255,14 +255,14 @@ void IRBuilder::SetInsertPoint(const Napi::CallbackInfo &info) {
 }
 
 void IRBuilder::SetCurrentDebugLocation(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1) {
         if (DebugLoc::IsClassOf(info[0])) {
-            llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+            const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
             builder->SetCurrentDebugLocation(*location);
             return;
         } else if (DILocation::IsClassOf(info[0])) {
-            llvm::DILocation *location = DILocation::Extract(info[0]);
+            const llvm::DILocation *location = DILocation::Extract(info[0]);
             builder->SetCurrentDebugLocation(location);
             return;
         }
@@ -272,7 +272,7 @@ void IRBuilder::SetCurrentDebugLocation(const Napi::CallbackInfo &info) {
 
 Napi::Function IRBuilder::InsertPoint::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "InsertPoint", {
+    const Napi::Function func = DefineClass(env, "InsertPoint", {
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -293,7 +293,7 @@ llvm::IRBuilderBase::InsertPoint IRBuilder::InsertPoint::Extract(const Napi::Val
 }
 
 IRBuilder::InsertPoint::InsertPoint(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::InsertPoint::constructor);
     }
@@ -327,15 +327,15 @@ void IRBuilder::restoreIP(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::CreateGlobalString(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && info[0].IsString() ||
         argsLen == 2 && info[0].IsString() && info[1].IsString() ||
         argsLen == 3 && info[0].IsString() && info[1].IsString() && info[2].IsNumber() ||
         argsLen == 4 && info[0].IsString() && info[1].IsString() && info[2].IsNumber() && Module::IsClassOf(info[3])) {
         const std::string &str = std::string(info[0].As<Napi::String>());
         const std::string &name = argsLen >= 2 ? std::string(info[1].As<Napi::String>()) : "";
-        unsigned addrSpace = argsLen >= 3 ? info[2].As<Napi::Number>() : 0;
+        const unsigned addrSpace = argsLen >= 3 ? info[2].As<Napi::Number>() : 0;
         llvm::Module *module = argsLen == 4 ? Module::Extract(info[3]) : nullptr;
         llvm::GlobalVariable *globalStr = builder->CreateGlobalString(str, name, addrSpace, module);
         return GlobalVariable::New(env, globalStr);
@@ -344,28 +344,28 @@ Napi::Value IRBuilder::CreateGlobalString(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::getInt1(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1 && info[0].IsBoolean()) {
-        bool value = info[0].As<Napi::Boolean>();
+        const bool value = info[0].As<Napi::Boolean>();
         return ConstantInt::New(env, builder->getInt1(value));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getInt1);
 }
 
 Napi::Value IRBuilder::getIntN(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber()) {
-        unsigned numBits = info[0].As<Napi::Number>();
-        uint64_t value = info[1].As<Napi::Number>().Int64Value();
+        const unsigned numBits = info[0].As<Napi::Number>();
+        const uint64_t value = info[1].As<Napi::Number>().Int64Value();
         return ConstantInt::New(env, builder->getIntN(numBits, value));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getIntN);
 }
 
 Napi::Value IRBuilder::getInt(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1 && APInt::IsClassOf(info[0])) {
-        llvm::APInt &value = APInt::Extract(info[0]);
+        const llvm::APInt &value = APInt::Extract(info[0]);
         return ConstantInt::New(env, builder->getInt(value));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getInt);
@@ -376,19 +376,19 @@ Napi::Value IRBuilder::getInt(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::getIntNTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1 && info[0].IsNumber()) {
-        unsigned numBits = info[0].As<Napi::Number>();
+        const unsigned numBits = info[0].As<Napi::Number>();
         return IntegerType::New(env, builder->getIntNTy(numBits));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::getIntNTy);
 }
 
 Napi::Value IRBuilder::getInt8PtrTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 0 || argsLen == 1 && info[0].IsNumber()) {
-        unsigned addrSpace = argsLen == 1 ? info[0].As<Napi::Number>() : 0;
+        const unsigned addrSpace = argsLen == 1 ? info[0].As<Napi::Number>() : 0;
         llvm::PointerType *type = builder->getInt8PtrTy(addrSpace);
         return PointerType::New(env, type);
     }
@@ -396,12 +396,12 @@ Napi::Value IRBuilder::getInt8PtrTy(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::getIntPtrTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && DataLayout::IsClassOf(info[0]) ||
         argsLen == 2 && DataLayout::IsClassOf(info[0]) && info[1].IsNumber()) {
-        llvm::DataLayout &dl = DataLayout::Extract(info[0]);
-        unsigned addrSpace = argsLen >= 2 ? info[1].As<Napi::Number>() : 0;
+        const llvm::DataLayout &dl = DataLayout::Extract(info[0]);
+        const unsigned addrSpace = argsLen >= 2 ? info[1].As<Napi::Number>() : 0;
         llvm::IntegerType *type = builder->getIntPtrTy(dl, addrSpace);
         return IntegerType::New(env, type);
     }
@@ -417,8 +417,8 @@ Napi::Value IRBuilder::CreateRetVoid(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateRet(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen >= 1 && Value::IsClassOf(info[0])) {
         llvm::ReturnInst *ret = builder->CreateRet(Value::Extract(info[0]));
         return ReturnInst::New(env, ret);
@@ -427,7 +427,7 @@ Napi::Value IRBuilder::CreateRet(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateBr(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 1 && BasicBlock::IsClassOf(info[0])) {
         llvm::BasicBlock *destBB = BasicBlock::Extract(info[0]);
         llvm::BranchInst *branch = builder->CreateBr(destBB);
@@ -437,7 +437,7 @@ Napi::Value IRBuilder::CreateBr(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateCondBr(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 3 && Value::IsClassOf(info[0]) && BasicBlock::IsClassOf(info[1]) && BasicBlock::IsClassOf(info[2])) {
         llvm::Value *cond = Value::Extract(info[0]);
         llvm::BasicBlock *thenBB = BasicBlock::Extract(info[1]);
@@ -449,13 +449,13 @@ Napi::Value IRBuilder::CreateCondBr(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateSwitch(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Value::IsClassOf(info[0]) && BasicBlock::IsClassOf(info[1]) ||
         argsLen == 3 && Value::IsClassOf(info[0]) && BasicBlock::IsClassOf(info[1]) && info[2].IsNumber()) {
         llvm::Value *value = Value::Extract(info[0]);
         llvm::BasicBlock *dest = BasicBlock::Extract(info[1]);
-        unsigned numCases = argsLen >= 3 ? info[2].As<Napi::Number>() : 10;
+        const unsigned numCases = argsLen >= 3 ? info[2].As<Napi::Number>() : 10;
         llvm::SwitchInst *switchInst = builder->CreateSwitch(value, dest, numCases);
         return SwitchInst::New(env, switchInst);
     }
@@ -463,12 +463,12 @@ Napi::Value IRBuilder::CreateSwitch(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateIndirectBr(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && Value::IsClassOf(info[0]) ||
         argsLen == 2 && Value::IsClassOf(info[0]) && info[1].IsNumber()) {
         llvm::Value *addr = Value::Extract(info[0]);
-        unsigned numDests = argsLen == 2 ? info[1].As<Napi::Number>() : 10;
+        const unsigned numDests = argsLen == 2 ? info[1].As<Napi::Number>() : 10;
         llvm::IndirectBrInst *indirectBrInst = builder->CreateIndirectBr(addr, numDests);
         return IndirectBrInst::New(env, indirectBrInst);
     }
@@ -542,8 +542,8 @@ Napi::Value IRBuilder::CreateInvoke(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateResume(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && Value::IsClassOf(info[0])) {
         llvm::ResumeInst *resumeInst = builder->CreateResume(Value::Extract(info[0]));
         return ResumeInst::New(info.Env(), resumeInst);
@@ -560,14 +560,14 @@ Napi::Value IRBuilder::CreateUnreachable(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::CreateAlloca(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && Type::IsClassOf(info[0]) ||
         argsLen == 2 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
         argsLen >= 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsString()) {
         llvm::Type *type = Type::Extract(info[0]);
         llvm::Value *arraySize = argsLen >= 2 ? Value::Extract(info[1]) : nullptr;
-        std::string name = argsLen >= 3 ? std::string(info[2].As<Napi::String>()) : "";
+        const std::string name = argsLen >= 3 ? std::string(info[2].As<Napi::String>()) : "";
         llvm::AllocaInst *alloca = builder->CreateAlloca(type, arraySize, name);
         return AllocaInst::New(env, alloca);
     }
@@ -575,13 +575,13 @@ Napi::Value IRBuilder::CreateAlloca(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateLoad(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
         argsLen >= 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsString()) {
         llvm::Type *type = Type::Extract(info[0]);
         llvm::Value *ptr = Value::Extract(info[1]);
-        std::string name = argsLen >= 3 ? std::string(info[2].As<Napi::String>()) : "";
+        const std::string name = argsLen >= 3 ? std::string(info[2].As<Napi::String>()) : "";
         llvm::LoadInst *load = builder->CreateLoad(type, ptr, name);
         return LoadInst::New(env, load);
     }
@@ -589,7 +589,7 @@ Napi::Value IRBuilder::CreateLoad(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateStore(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 2 && Value::IsClassOf(info[0]) && Value::IsClassOf(info[1])) {
         llvm::Value *value = Value::Extract(info[0]);
         llvm::Value *ptr = Value::Extract(info[1]);
@@ -600,8 +600,8 @@ Napi::Value IRBuilder::CreateStore(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateGEP(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     std::vector<llvm::Value *> idxList;
     if (argsLen == 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
         argsLen == 4 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[3].IsString()) {
@@ -619,8 +619,8 @@ Napi::Value IRBuilder::CreateGEP(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateInBoundsGEP(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     std::vector<llvm::Value *> idxList;
     if (argsLen == 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
         argsLen == 4 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[3].IsString()) {
@@ -638,15 +638,15 @@ Napi::Value IRBuilder::CreateInBoundsGEP(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateGlobalStringPtr(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && info[0].IsString() ||
         argsLen == 2 && info[0].IsString() && info[1].IsString() ||
         argsLen == 3 && info[0].IsString() && info[1].IsString() && info[2].IsNumber() ||
         argsLen == 4 && info[0].IsString() && info[1].IsString() && info[2].IsNumber() && Module::IsClassOf(info[3])) {
         const std::string &str = std::string(info[0].As<Napi::String>());
         const std::string &name = argsLen >= 2 ? std::string(info[1].As<Napi::String>()) : "";
-        unsigned addrSpace = argsLen >= 3 ? info[2].As<Napi::Number>() : 0;
+        const unsigned addrSpace = argsLen >= 3 ? info[2].As<Napi::Number>() : 0;
         llvm::Module *module = argsLen == 4 ? Module::Extract(info[3]) : nullptr;
         llvm::Constant *globalStrPtr = builder->CreateGlobalStringPtr(str, name, addrSpace, module);
         return Constant::New(env, globalStrPtr);
@@ -659,13 +659,13 @@ Napi::Value IRBuilder::CreateGlobalStringPtr(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::CreateIntCast(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 3 && Value::IsClassOf(info[0]) && Type::IsClassOf(info[1]) && info[2].IsBoolean() ||
         argsLen == 4 && Value::IsClassOf(info[0]) && Type::IsClassOf(info[1]) && info[2].IsBoolean() && info[3].IsString()) {
         llvm::Value *value = Value::Extract(info[0]);
         llvm::Type *destType = Type::Extract(info[1]);
-        bool isSigned = info[2].As<Napi::Boolean>();
+        const bool isSigned = info[2].As<Napi::Boolean>();
         const std::string &name = argsLen == 4 ? std::string(info[3].As<Napi::String>()) : "";
         return Value::New(env, builder->CreateIntCast(value, destType, isSigned, name));
     }
@@ -677,12 +677,12 @@ Napi::Value IRBuilder::CreateIntCast(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::CreatePHI(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Type::IsClassOf(info[0]) && info[1].IsNumber() ||
         argsLen == 3 && Type::IsClassOf(info[0]) && info[1].IsNumber() && info[2].IsString()) {
         llvm::Type *type = Type::Extract(info[0]);
-        unsigned numReservedValues = info[1].As<Napi::Number>();
+        const unsigned numReservedValues = info[1].As<Napi::Number>();
         const std::string &name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
         llvm::PHINode *phiNode = builder->CreatePHI(type, numReservedValues, name);
         return PHINode::New(env, phiNode);
@@ -691,46 +691,46 @@ Napi::Value IRBuilder::CreatePHI(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateCall(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     llvm::CallInst *callInst = nullptr;
     std::vector<llvm::Value *> calleeArgs;
     if (argsLen == 1 && Function::IsClassOf(info[0]) ||
         argsLen == 2 && Function::IsClassOf(info[0]) && info[1].IsString()) {
         llvm::Function *callee = Function::Extract(info[0]);
-        std::string name = argsLen == 2 ? std::string(info[1].As<Napi::String>()) : "";
+        const std::string name = argsLen == 2 ? std::string(info[1].As<Napi::String>()) : "";
         callInst = builder->CreateCall(callee, llvm::None, name);
     } else if (argsLen == 2 && Function::IsClassOf(info[0]) && info[1].IsArray() ||
                argsLen == 3 && Function::IsClassOf(info[0]) && info[1].IsArray() && info[2].IsString()) {
         if (assembleArray<WrappedValue>(info[1].As<Napi::Array>(), calleeArgs)) {
             llvm::Function *callee = Function::Extract(info[0]);
-            std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
+            const std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
             callInst = builder->CreateCall(callee, calleeArgs, name);
         }
     } else if (argsLen == 1 && FunctionCallee::IsClassOf(info[0]) ||
                argsLen == 2 && FunctionCallee::IsClassOf(info[0]) && info[1].IsString()) {
-        llvm::FunctionCallee callee = FunctionCallee::Extract(info[0]);
-        std::string name = argsLen == 2 ? std::string(info[1].As<Napi::String>()) : "";
+        const llvm::FunctionCallee callee = FunctionCallee::Extract(info[0]);
+        const std::string name = argsLen == 2 ? std::string(info[1].As<Napi::String>()) : "";
         callInst = builder->CreateCall(callee, llvm::None, name);
     } else if (argsLen == 2 && FunctionCallee::IsClassOf(info[0]) && info[1].IsArray() ||
                argsLen == 3 && FunctionCallee::IsClassOf(info[0]) && info[1].IsArray() && info[2].IsString()) {
         if (assembleArray<WrappedValue>(info[1].As<Napi::Array>(), calleeArgs)) {
-            llvm::FunctionCallee callee = FunctionCallee::Extract(info[0]);
-            std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
+            const llvm::FunctionCallee callee = FunctionCallee::Extract(info[0]);
+            const std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
             callInst = builder->CreateCall(callee, calleeArgs, name);
         }
     } else if (argsLen == 2 && FunctionType::IsClassOf(info[0]) && Value::IsClassOf(info[1]) ||
                argsLen == 3 && FunctionType::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsString()) {
         llvm::FunctionType *funcType = FunctionType::Extract(info[0]);
         llvm::Value *callee = Value::Extract(info[1]);
-        std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
+        const std::string name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
         callInst = builder->CreateCall(funcType, callee, llvm::None, name);
     } else if (argsLen == 3 && FunctionType::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsArray() ||
                argsLen == 4 && FunctionType::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsArray() && info[3].IsString()) {
         if (assembleArray<WrappedValue>(info[2].As<Napi::Array>(), calleeArgs)) {
             llvm::FunctionType *funcType = FunctionType::Extract(info[0]);
             llvm::Value *callee = Value::Extract(info[1]);
-            std::string name = argsLen == 4 ? std::string(info[3].As<Napi::String>()) : "";
+            const std::string name = argsLen == 4 ? std::string(info[3].As<Napi::String>()) : "";
             callInst = builder->CreateCall(funcType, callee, calleeArgs, name);
         }
     }
@@ -741,8 +741,8 @@ Napi::Value IRBuilder::CreateCall(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateSelect(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 3 && Value::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && Value::IsClassOf(info[2]) ||
         argsLen == 4 && Value::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && Value::IsClassOf(info[2]) && info[3].IsString()) {
         llvm::Value *cond = Value::Extract(info[0]);
@@ -755,13 +755,13 @@ Napi::Value IRBuilder::CreateSelect(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateExtractValue(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Value::IsClassOf(info[0]) && info[1].IsArray() ||
         argsLen == 3 && Value::IsClassOf(info[0]) && info[1].IsArray() && info[2].IsString()) {
         llvm::Value *agg = Value::Extract(info[0]);
         const auto &idxArr = info[1].As<Napi::Array>();
-        unsigned numIdxs = idxArr.Length();
+        const unsigned numIdxs = idxArr.Length();
         std::vector<unsigned> idxs(numIdxs);
         bool convertSuccess = true;
         for (unsigned i = 0; i < numIdxs; ++i) {
@@ -782,14 +782,14 @@ Napi::Value IRBuilder::CreateExtractValue(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateInsertValue(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 3 && Value::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsArray() ||
         argsLen == 4 && Value::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && info[2].IsArray() && info[3].IsString()) {
         llvm::Value *agg = Value::Extract(info[0]);
         llvm::Value *value = Value::Extract(info[1]);
         const auto &idxArr = info[2].As<Napi::Array>();
-        unsigned numIdxs = idxArr.Length();
+        const unsigned numIdxs = idxArr.Length();
         std::vector<unsigned> idxs(numIdxs);
         bool convertSuccess = true;
         for (unsigned i = 0; i < numIdxs; ++i) {
@@ -810,12 +810,12 @@ Napi::Value IRBuilder::CreateInsertValue(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IRBuilder::CreateLandingPad(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Type::IsClassOf(info[0]) && info[1].IsNumber() ||
         argsLen == 3 && Type::IsClassOf(info[0]) && info[1].IsNumber() && info[2].IsString()) {
         llvm::Type *type = Type::Extract(info[0]);
-        unsigned numClauses = info[1].As<Napi::Number>();
+        const unsigned numClauses = info[1].As<Napi::Number>();
         const std::string &name = argsLen == 3 ? std::string(info[2].As<Napi::String>()) : "";
         llvm::LandingPadInst *lpInst = builder->CreateLandingPad(type, numClauses, name);
         return LandingPadInst::New(env, lpInst);
@@ -828,8 +828,8 @@ Napi::Value IRBuilder::CreateLandingPad(const Napi::CallbackInfo &info) {
 //===--------------------------------------------------------------------===//
 
 Napi::Value IRBuilder::CreatePtrDiff(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 3 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && Value::IsClassOf(info[2]) ||
         argsLen == 4 && Type::IsClassOf(info[0]) && Value::IsClassOf(info[1]) && Value::IsClassOf(info[2]) && info[3].IsString()) {
         llvm::Type *elementType = Type::Extract(info[0]);

@@ -683,50 +683,75 @@ declare namespace llvm {
     }
 
     class ConstantExpr extends Constant {
-        /** 
-         * getAlignOf constant expr - computes the alignment of a type in a target 
+        /**
+         * getAlignOf constant expr - computes the alignment of a type in a target
          * independent way (Note: the return type is an i64).
          */
         public static getAlignOf(type: Type): Constant;
 
-        /** 
+        /**
          * getSizeOf constant expr - computes the (alloc) size of a type (in
          * address-units, not bits) in a target independent way (Note: the return
-         * type is an i64).  
+         * type is an i64).
          */
         public static getSizeOf(type: Type): Constant;
 
-        /** 
+        /**
          * getOffsetOf constant expr - computes the offset of a struct field in a
          * target independent way (Note: the return type is an i64).
          */
         public static getOffsetOf(type: StructType, fieldNo: number): Constant;
 
-        /** 
+        /**
          * getOffsetOf constant expr - This is a generalized form of getOffsetOf,
          * which supports any aggregate type, and any Constant index.
          */
         public static getOffsetOf(tyoe: StructType, fieldNo: Constant): Constant;
 
         public static getAdd(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getSub(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getMul(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getXor(c1: Constant, c2: Constant): Constant;
+
         public static getNeg(constant: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getFNeg(constant: Constant): Constant;
+
         public static getNot(constant: Constant): Constant;
+
         public static getAnd(c1: Constant, c2: Constant): Constant;
+
         public static getOr(c1: Constant, c2: Constant): Constant;
+
         public static getUMin(c1: Constant, c2: Constant): Constant;
+
         public static getShl(c1: Constant, c2: Constant, hasNUW?: boolean, hasNSW?: boolean): Constant;
+
         public static getLShr(c1: Constant, c2: Constant, isExact?: boolean): Constant;
+
         public static getAShr(c1: Constant, c2: Constant, isExact?: boolean): Constant;
+
         public static getTrunc(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getSExt(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getZExt(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getFPTrunc(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getFPExtend(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getUIToFP(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
+        public static getSIToFP(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
+        public static getFPToUI(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
+        public static getFPToSI(c: Constant, type: Type, OnlyIfReduced?: boolean): Constant;
+
         public static getBitCast(constant: Constant, type: Type): Constant;
 
         // duplicated
@@ -862,6 +887,49 @@ declare namespace llvm {
 
         public addRetAttr(kind: number): void;
         public addRetAttr(attr: Attribute): void;
+
+        public hasLazyArguments(): boolean;
+
+        public isMaterializable(): boolean;
+
+        public setIsMaterializable(v: boolean): void;
+
+        /**
+         * getIntrinsicID - This method returns the ID number of the specified
+         * function, or Intrinsic::not_intrinsic if the function is not an
+         * intrinsic, or if the pointer is null.  This value is always defined to be
+         * zero to allow easy checking for whether a function is intrinsic or not.
+         * The particular intrinsic functions which correspond to this value are
+         * defined in llvm/Intrinsics.h.
+         */
+        public getIntrinsicID(): number;
+
+        /**
+         *isIntrinsic - Returns true if the function's name starts with "llvm.".
+         * It's possible for this function to return true while getIntrinsicID()
+         * returns Intrinsic::not_intrinsic!
+         */
+        public isIntrinsic(): boolean;
+
+        /**
+         * isTargetIntrinsic - Returns true if IID is an intrinsic specific to a
+         * certain target. If it is a generic intrinsic false is returned.
+         */
+        public static isTargetIntrinsic(id: number): boolean;
+
+        /**
+         * isTargetIntrinsic - Returns true if this function is an intrinsic and the
+         * intrinsic is specific to a certain target. If this is not an intrinsic
+         * or a generic intrinsic, false is returned.
+         */
+        public isTargetIntrinsic(): boolean;
+
+        /**
+         * Returns true if the function is one of the "Constrained Floating-Point
+         * Intrinsics". Returns false if not, and returns false when
+         * getIntrinsicID() returns Intrinsic::not_intrinsic.
+         */
+        public isConstrainedFPIntrinsic(): boolean;
 
         protected constructor();
     }
@@ -2043,6 +2111,7 @@ declare namespace llvm {
         const minimum: number;
         const minnum: number;
         const nearbyint: number;
+        const not_intrinsic: number;
         const objc_arc_annotation_bottomup_bbend: number;
         const objc_arc_annotation_bottomup_bbstart: number;
         const objc_arc_annotation_topdown_bbend: number;

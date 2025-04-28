@@ -3,7 +3,7 @@
 
 void GlobalValue::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Object linkageTypes = Napi::Object::New(env);
+    const Napi::Object linkageTypes = Napi::Object::New(env);
     linkageTypes.Set("ExternalLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::ExternalLinkage));
     linkageTypes.Set("AvailableExternallyLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::AvailableExternallyLinkage));
     linkageTypes.Set("LinkOnceAnyLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::LinkOnceAnyLinkage));
@@ -15,11 +15,11 @@ void GlobalValue::Init(Napi::Env env, Napi::Object &exports) {
     linkageTypes.Set("PrivateLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::PrivateLinkage));
     linkageTypes.Set("ExternalWeakLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::ExternalWeakLinkage));
     linkageTypes.Set("CommonLinkage", Napi::Number::New(env, llvm::GlobalValue::LinkageTypes::CommonLinkage));
-    Napi::Object visibilityTypes = Napi::Object::New(env);
+    const Napi::Object visibilityTypes = Napi::Object::New(env);
     visibilityTypes.Set("DefaultVisibility", Napi::Number::New(env, llvm::GlobalValue::VisibilityTypes::DefaultVisibility));
     visibilityTypes.Set("HiddenVisibility", Napi::Number::New(env, llvm::GlobalValue::VisibilityTypes::HiddenVisibility));
     visibilityTypes.Set("ProtectedVisibility", Napi::Number::New(env, llvm::GlobalValue::VisibilityTypes::ProtectedVisibility));
-    Napi::Function func = DefineClass(env, "GlobalValue", {
+    const Napi::Function func = DefineClass(env, "GlobalValue", {
             StaticValue("LinkageTypes", linkageTypes),
             StaticValue("VisibilityTypes", visibilityTypes),
             InstanceMethod("getType", &GlobalValue::getType),
@@ -50,11 +50,11 @@ llvm::GlobalValue *GlobalValue::Extract(const Napi::Value &value) {
 }
 
 GlobalValue::GlobalValue(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::GlobalValue::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::GlobalValue>>();
+    const auto external = info[0].As<Napi::External<llvm::GlobalValue>>();
     globalValue = external.Data();
 }
 
@@ -63,13 +63,13 @@ llvm::GlobalValue *GlobalValue::getLLVMPrimitive() {
 }
 
 Napi::Value GlobalValue::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::PointerType *type = globalValue->getType();
     return PointerType::New(env, type);
 }
 
 Napi::Value GlobalValue::getValueType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = globalValue->getValueType();
     return Type::New(env, type);
 }

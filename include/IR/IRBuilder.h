@@ -243,8 +243,8 @@ private:
 
     template<CreateCast method>
     Napi::Value CreateCastFactory(const Napi::CallbackInfo &info) {
-        Napi::Env env = info.Env();
-        unsigned argsLen = info.Length();
+        const Napi::Env env = info.Env();
+        const unsigned argsLen = info.Length();
         if (argsLen < 2 || !Value::IsClassOf(info[0]) || !Type::IsClassOf(info[1]) || argsLen >= 3 && !info[2].IsString()) {
             throw Napi::TypeError::New(env, ErrMsg::Class::IRBuilder::CreateCastFactory);
         }

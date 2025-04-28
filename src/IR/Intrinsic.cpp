@@ -2,16 +2,16 @@
 #include "Util/index.h"
 
 Napi::Value getDeclaration(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Module::IsClassOf(info[0]) && info[1].IsNumber() ||
         argsLen == 3 && Module::IsClassOf(info[0]) && info[1].IsNumber() && info[2].IsArray()) {
         llvm::Module *module = Module::Extract(info[0]);
-        llvm::Intrinsic::ID id = static_cast<llvm::Intrinsic::ID>(info[1].As<Napi::Number>().Uint32Value());
+        const llvm::Intrinsic::ID id = static_cast<llvm::Intrinsic::ID>(info[1].As<Napi::Number>().Uint32Value());
         llvm::Function *function;
         if (argsLen == 3) {
-            auto types = info[2].As<Napi::Array>();
-            unsigned numTypes = types.Length();
+            const auto types = info[2].As<Napi::Array>();
+            const unsigned numTypes = types.Length();
             std::vector<llvm::Type *> paramTypes(numTypes);
             for (unsigned i = 0; i < numTypes; ++i) {
                 paramTypes[i] = Type::Extract(types.Get(i));
@@ -26,7 +26,7 @@ Napi::Value getDeclaration(const Napi::CallbackInfo &info) {
 }
 
 void Intrinsic::Init(Napi::Env env, Napi::Object &exports) {
-    Napi::Object intrinsicNS = Napi::Object::New(env);
+    const Napi::Object intrinsicNS = Napi::Object::New(env);
     intrinsicNS.Set("abs", Napi::Number::New(env, llvm::Intrinsic::abs));
     intrinsicNS.Set("addressofreturnaddress", Napi::Number::New(env, llvm::Intrinsic::addressofreturnaddress));
     intrinsicNS.Set("adjust_trampoline", Napi::Number::New(env, llvm::Intrinsic::adjust_trampoline));
@@ -173,6 +173,7 @@ void Intrinsic::Init(Napi::Env env, Napi::Object &exports) {
     intrinsicNS.Set("minimum", Napi::Number::New(env, llvm::Intrinsic::minimum));
     intrinsicNS.Set("minnum", Napi::Number::New(env, llvm::Intrinsic::minnum));
     intrinsicNS.Set("nearbyint", Napi::Number::New(env, llvm::Intrinsic::nearbyint));
+    intrinsicNS.Set("not_intrinsic", Napi::Number::New(env, llvm::Intrinsic::not_intrinsic));
     intrinsicNS.Set("objc_arc_annotation_bottomup_bbend",
                     Napi::Number::New(env, llvm::Intrinsic::objc_arc_annotation_bottomup_bbend));
     intrinsicNS.Set("objc_arc_annotation_bottomup_bbstart",

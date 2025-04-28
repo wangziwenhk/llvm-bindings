@@ -3,7 +3,7 @@
 
 void GlobalObject::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "GlobalObject", {
+    const Napi::Function func = DefineClass(env, "GlobalObject", {
             InstanceMethod("getType", &GlobalObject::getType),
             InstanceMethod("getValueType", &GlobalObject::getValueType)
     });
@@ -34,11 +34,11 @@ llvm::GlobalObject *GlobalObject::Extract(const Napi::Value &value) {
 }
 
 GlobalObject::GlobalObject(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::GlobalObject::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::GlobalObject>>();
+    const auto external = info[0].As<Napi::External<llvm::GlobalObject>>();
     globalObject = external.Data();
 }
 
@@ -47,13 +47,13 @@ llvm::GlobalObject *GlobalObject::getLLVMPrimitive() {
 }
 
 Napi::Value GlobalObject::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::PointerType *type = globalObject->getType();
     return PointerType::New(env, type);
 }
 
 Napi::Value GlobalObject::getValueType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = globalObject->getValueType();
     return Type::New(env, type);
 }

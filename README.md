@@ -130,8 +130,10 @@ Due to the limitation of `node-addon-api`, this project has not implemented inhe
 | 0.2.x                  | 12.0.x                   |
 | 0.3.x                  | 13.0.x                   |
 | 0.4.x                  | 14.0.x                   |
+| 0.5.x                  | 15.0.x                   |
 
-## Acknowledgments
-- [MichaReiser](https://github.com/MichaReiser): the creator of [llvm-node](https://github.com/MichaReiser/llvm-node)
+## Inheritance
 
-> [llvm-bindings](https://github.com/ApsarasX/llvm-bindings) is mostly inspired by [llvm-node](https://github.com/MichaReiser/llvm-node).
+Due to the limitations of `node-addon-api`, this project has not implemented inheritance for LLVM classes. As a result,
+calling a superclass method from a subclass object will result in an error. For more details, please refer
+to [#1](https://github.com/ApsarasX/llvm-bindings/issues/1).

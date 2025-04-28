@@ -3,7 +3,7 @@
 
 void Value::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "Value", {
+    const Napi::Function func = DefineClass(env, "Value", {
             InstanceMethod("hasName", &Value::hasName),
             InstanceMethod("getType", &Value::getType),
             InstanceMethod("getName", &Value::getName),
@@ -44,11 +44,11 @@ llvm::Value *Value::Extract(const Napi::Value &value) {
 }
 
 Value::Value(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Value::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::Value>>();
+    const auto external = info[0].As<Napi::External<llvm::Value>>();
     value = external.Data();
 }
 
@@ -57,23 +57,23 @@ llvm::Value *Value::getLLVMPrimitive() {
 }
 
 Napi::Value Value::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = value->getType();
     return Type::New(env, type);
 }
 
 Napi::Value Value::hasName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     return Napi::Boolean::New(env, value->hasName());
 }
 
 Napi::Value Value::getName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     return Napi::String::New(env, value->getName().str());
 }
 
 void Value::setName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsString()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Value::setName);
     }
@@ -86,7 +86,7 @@ void Value::deleteValue(const Napi::CallbackInfo &info) {
 }
 
 void Value::replaceAllUsesWith(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !Value::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Value::replaceAllUsesWith);
     }

@@ -3,7 +3,7 @@
 
 void SMDiagnostic::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "SMDiagnostic", {
+    const Napi::Function func = DefineClass(env, "SMDiagnostic", {
     });
     constructor = Persistent(func);
     constructor.SuppressDestruct();
@@ -19,7 +19,7 @@ llvm::SMDiagnostic &SMDiagnostic::Extract(const Napi::Value &value) {
 }
 
 SMDiagnostic::SMDiagnostic(const Napi::CallbackInfo &info) : Napi::ObjectWrap<SMDiagnostic>{info} {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::SMDiagnostic::constructor);
     }

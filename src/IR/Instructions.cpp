@@ -7,7 +7,7 @@
 
 void AllocaInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "AllocaInst", {
+    const Napi::Function func = DefineClass(env, "AllocaInst", {
             InstanceMethod("getAllocatedType", &AllocaInst::getAllocatedType),
             InstanceMethod("getArraySize", &AllocaInst::getArraySize),
             InstanceMethod("getType", &AllocaInst::getType),
@@ -35,11 +35,11 @@ llvm::AllocaInst *AllocaInst::Extract(const Napi::Value &value) {
 }
 
 AllocaInst::AllocaInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::AllocaInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::AllocaInst>>();
+    const auto external = info[0].As<Napi::External<llvm::AllocaInst>>();
     allocaInst = external.Data();
 }
 
@@ -56,14 +56,14 @@ Napi::Value AllocaInst::getArraySize(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value AllocaInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::PointerType *type = allocaInst->getType();
     return PointerType::New(env, type);
 }
 
 void AllocaInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         allocaInst->setDebugLoc(*location);
         return;
     }
@@ -76,7 +76,7 @@ void AllocaInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void LoadInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "LoadInst", {
+    const Napi::Function func = DefineClass(env, "LoadInst", {
             InstanceMethod("getType", &LoadInst::getType),
             InstanceMethod("setDebugLoc", &LoadInst::setDebugLoc)
     });
@@ -102,11 +102,11 @@ llvm::LoadInst *LoadInst::Extract(const Napi::Value &value) {
 }
 
 LoadInst::LoadInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::LoadInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::LoadInst>>();
+    const auto external = info[0].As<Napi::External<llvm::LoadInst>>();
     loadInst = external.Data();
 }
 
@@ -115,14 +115,14 @@ llvm::LoadInst *LoadInst::getLLVMPrimitive() {
 }
 
 Napi::Value LoadInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = loadInst->getType();
     return Type::New(env, type);
 }
 
 void LoadInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         loadInst->setDebugLoc(*location);
         return;
     }
@@ -135,7 +135,7 @@ void LoadInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void StoreInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "StoreInst", {
+    const Napi::Function func = DefineClass(env, "StoreInst", {
             InstanceMethod("getValueOperand", &StoreInst::getValueOperand),
             InstanceMethod("getPointerOperand", &StoreInst::getPointerOperand),
             InstanceMethod("getPointerOperandType", &StoreInst::getPointerOperandType),
@@ -164,11 +164,11 @@ llvm::StoreInst *StoreInst::Extract(const Napi::Value &value) {
 }
 
 StoreInst::StoreInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StoreInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::StoreInst>>();
+    const auto external = info[0].As<Napi::External<llvm::StoreInst>>();
     storeInst = external.Data();
 }
 
@@ -189,14 +189,14 @@ Napi::Value StoreInst::getPointerOperandType(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value StoreInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = storeInst->getType();
     return Type::New(env, type);
 }
 
 void StoreInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         storeInst->setDebugLoc(*location);
         return;
     }
@@ -209,7 +209,7 @@ void StoreInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FenceInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FenceInst", {
+    const Napi::Function func = DefineClass(env, "FenceInst", {
             InstanceMethod("getType", &FenceInst::getType),
             InstanceMethod("setDebugLoc", &FenceInst::setDebugLoc)
     });
@@ -235,11 +235,11 @@ llvm::FenceInst *FenceInst::Extract(const Napi::Value &value) {
 }
 
 FenceInst::FenceInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FenceInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FenceInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FenceInst>>();
     fenceInst = external.Data();
 }
 
@@ -248,14 +248,14 @@ llvm::FenceInst *FenceInst::getLLVMPrimitive() {
 }
 
 Napi::Value FenceInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fenceInst->getType();
     return Type::New(env, type);
 }
 
 void FenceInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fenceInst->setDebugLoc(*location);
         return;
     }
@@ -268,7 +268,7 @@ void FenceInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void AtomicCmpXchgInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "AtomicCmpXchgInst", {
+    const Napi::Function func = DefineClass(env, "AtomicCmpXchgInst", {
             InstanceMethod("getType", &AtomicCmpXchgInst::getType),
             InstanceMethod("setDebugLoc", &AtomicCmpXchgInst::setDebugLoc)
     });
@@ -294,11 +294,11 @@ llvm::AtomicCmpXchgInst *AtomicCmpXchgInst::Extract(const Napi::Value &value) {
 }
 
 AtomicCmpXchgInst::AtomicCmpXchgInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::AtomicCmpXchgInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::AtomicCmpXchgInst>>();
+    const auto external = info[0].As<Napi::External<llvm::AtomicCmpXchgInst>>();
     atomicCmpXchgInst = external.Data();
 }
 
@@ -307,14 +307,14 @@ llvm::AtomicCmpXchgInst *AtomicCmpXchgInst::getLLVMPrimitive() {
 }
 
 Napi::Value AtomicCmpXchgInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = atomicCmpXchgInst->getType();
     return Type::New(env, type);
 }
 
 void AtomicCmpXchgInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         atomicCmpXchgInst->setDebugLoc(*location);
         return;
     }
@@ -327,7 +327,7 @@ void AtomicCmpXchgInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void AtomicRMWInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "AtomicRMWInst", {
+    const Napi::Function func = DefineClass(env, "AtomicRMWInst", {
             InstanceMethod("getType", &AtomicRMWInst::getType),
             InstanceMethod("setDebugLoc", &AtomicRMWInst::setDebugLoc)
     });
@@ -353,11 +353,11 @@ llvm::AtomicRMWInst *AtomicRMWInst::Extract(const Napi::Value &value) {
 }
 
 AtomicRMWInst::AtomicRMWInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::AtomicRMWInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::AtomicRMWInst>>();
+    const auto external = info[0].As<Napi::External<llvm::AtomicRMWInst>>();
     atomicRMWInst = external.Data();
 }
 
@@ -366,14 +366,14 @@ llvm::AtomicRMWInst *AtomicRMWInst::getLLVMPrimitive() {
 }
 
 Napi::Value AtomicRMWInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = atomicRMWInst->getType();
     return Type::New(env, type);
 }
 
 void AtomicRMWInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         atomicRMWInst->setDebugLoc(*location);
         return;
     }
@@ -386,7 +386,7 @@ void AtomicRMWInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void GetElementPtrInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "GetElementPtrInst", {
+    const Napi::Function func = DefineClass(env, "GetElementPtrInst", {
             InstanceMethod("getType", &GetElementPtrInst::getType),
             InstanceMethod("setDebugLoc", &GetElementPtrInst::setDebugLoc)
     });
@@ -412,11 +412,11 @@ llvm::GetElementPtrInst *GetElementPtrInst::Extract(const Napi::Value &value) {
 }
 
 GetElementPtrInst::GetElementPtrInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::GetElementPtrInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::GetElementPtrInst>>();
+    const auto external = info[0].As<Napi::External<llvm::GetElementPtrInst>>();
     gepInst = external.Data();
 }
 
@@ -425,14 +425,14 @@ llvm::GetElementPtrInst *GetElementPtrInst::getLLVMPrimitive() {
 }
 
 Napi::Value GetElementPtrInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = gepInst->getType();
     return Type::New(env, type);
 }
 
 void GetElementPtrInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         gepInst->setDebugLoc(*location);
         return;
     }
@@ -445,7 +445,7 @@ void GetElementPtrInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ICmpInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ICmpInst", {
+    const Napi::Function func = DefineClass(env, "ICmpInst", {
             InstanceMethod("getType", &ICmpInst::getType),
             InstanceMethod("setDebugLoc", &ICmpInst::setDebugLoc)
     });
@@ -471,11 +471,11 @@ llvm::ICmpInst *ICmpInst::Extract(const Napi::Value &value) {
 }
 
 ICmpInst::ICmpInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ICmpInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ICmpInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ICmpInst>>();
     icmpInst = external.Data();
 }
 
@@ -484,14 +484,14 @@ llvm::ICmpInst *ICmpInst::getLLVMPrimitive() {
 }
 
 Napi::Value ICmpInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = icmpInst->getType();
     return Type::New(env, type);
 }
 
 void ICmpInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         icmpInst->setDebugLoc(*location);
         return;
     }
@@ -504,7 +504,7 @@ void ICmpInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FCmpInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FCmpInst", {
+    const Napi::Function func = DefineClass(env, "FCmpInst", {
             InstanceMethod("getType", &FCmpInst::getType),
             InstanceMethod("setDebugLoc", &FCmpInst::setDebugLoc)
     });
@@ -530,11 +530,11 @@ llvm::FCmpInst *FCmpInst::Extract(const Napi::Value &value) {
 }
 
 FCmpInst::FCmpInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FCmpInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FCmpInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FCmpInst>>();
     fcmpInst = external.Data();
 }
 
@@ -543,14 +543,14 @@ llvm::FCmpInst *FCmpInst::getLLVMPrimitive() {
 }
 
 Napi::Value FCmpInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fcmpInst->getType();
     return Type::New(env, type);
 }
 
 void FCmpInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fcmpInst->setDebugLoc(*location);
         return;
     }
@@ -563,7 +563,7 @@ void FCmpInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CallInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CallInst", {
+    const Napi::Function func = DefineClass(env, "CallInst", {
             InstanceMethod("getType", &CallInst::getType),
             InstanceMethod("setDebugLoc", &CallInst::setDebugLoc)
     });
@@ -589,11 +589,11 @@ llvm::CallInst *CallInst::Extract(const Napi::Value &value) {
 }
 
 CallInst::CallInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CallInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CallInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CallInst>>();
     callInst = external.Data();
 }
 
@@ -602,14 +602,14 @@ llvm::CallInst *CallInst::getLLVMPrimitive() {
 }
 
 Napi::Value CallInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = callInst->getType();
     return Type::New(env, type);
 }
 
 void CallInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         callInst->setDebugLoc(*location);
         return;
     }
@@ -622,7 +622,7 @@ void CallInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void SelectInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "SelectInst", {
+    const Napi::Function func = DefineClass(env, "SelectInst", {
             InstanceMethod("getType", &SelectInst::getType),
             InstanceMethod("getCondition", &SelectInst::getCondition),
             InstanceMethod("getTrueValue", &SelectInst::getTrueValue),
@@ -654,11 +654,11 @@ llvm::SelectInst *SelectInst::Extract(const Napi::Value &value) {
 }
 
 SelectInst::SelectInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::SelectInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::SelectInst>>();
+    const auto external = info[0].As<Napi::External<llvm::SelectInst>>();
     selectInst = external.Data();
 }
 
@@ -706,14 +706,14 @@ void SelectInst::setFalseValue(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value SelectInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = selectInst->getType();
     return Type::New(env, type);
 }
 
 void SelectInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         selectInst->setDebugLoc(*location);
         return;
     }
@@ -726,7 +726,7 @@ void SelectInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void VAArgInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "VAArgInst", {
+    const Napi::Function func = DefineClass(env, "VAArgInst", {
             InstanceMethod("getType", &VAArgInst::getType),
             InstanceMethod("setDebugLoc", &VAArgInst::setDebugLoc)
     });
@@ -752,11 +752,11 @@ llvm::VAArgInst *VAArgInst::Extract(const Napi::Value &value) {
 }
 
 VAArgInst::VAArgInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::VAArgInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::VAArgInst>>();
+    const auto external = info[0].As<Napi::External<llvm::VAArgInst>>();
     vaArgInst = external.Data();
 }
 
@@ -765,14 +765,14 @@ llvm::VAArgInst *VAArgInst::getLLVMPrimitive() {
 }
 
 Napi::Value VAArgInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = vaArgInst->getType();
     return Type::New(env, type);
 }
 
 void VAArgInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         vaArgInst->setDebugLoc(*location);
         return;
     }
@@ -785,7 +785,7 @@ void VAArgInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ExtractElementInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ExtractElementInst", {
+    const Napi::Function func = DefineClass(env, "ExtractElementInst", {
             InstanceMethod("getType", &ExtractElementInst::getType),
             InstanceMethod("setDebugLoc", &ExtractElementInst::setDebugLoc)
     });
@@ -811,11 +811,11 @@ llvm::ExtractElementInst *ExtractElementInst::Extract(const Napi::Value &value) 
 }
 
 ExtractElementInst::ExtractElementInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ExtractElementInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ExtractElementInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ExtractElementInst>>();
     extractElementInst = external.Data();
 }
 
@@ -824,14 +824,14 @@ llvm::ExtractElementInst *ExtractElementInst::getLLVMPrimitive() {
 }
 
 Napi::Value ExtractElementInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = extractElementInst->getType();
     return Type::New(env, type);
 }
 
 void ExtractElementInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         extractElementInst->setDebugLoc(*location);
         return;
     }
@@ -844,7 +844,7 @@ void ExtractElementInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void InsertElementInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "InsertElementInst", {
+    const Napi::Function func = DefineClass(env, "InsertElementInst", {
             InstanceMethod("getType", &InsertElementInst::getType),
             InstanceMethod("setDebugLoc", &InsertElementInst::setDebugLoc)
     });
@@ -870,11 +870,11 @@ llvm::InsertElementInst *InsertElementInst::Extract(const Napi::Value &value) {
 }
 
 InsertElementInst::InsertElementInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::InsertElementInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::InsertElementInst>>();
+    const auto external = info[0].As<Napi::External<llvm::InsertElementInst>>();
     insertElementInst = external.Data();
 }
 
@@ -883,14 +883,14 @@ llvm::InsertElementInst *InsertElementInst::getLLVMPrimitive() {
 }
 
 Napi::Value InsertElementInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::VectorType *type = insertElementInst->getType();
     return VectorType::New(env, type);
 }
 
 void InsertElementInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         insertElementInst->setDebugLoc(*location);
         return;
     }
@@ -903,7 +903,7 @@ void InsertElementInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ShuffleVectorInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ShuffleVectorInst", {
+    const Napi::Function func = DefineClass(env, "ShuffleVectorInst", {
             InstanceMethod("getType", &ShuffleVectorInst::getType),
             InstanceMethod("setDebugLoc", &ShuffleVectorInst::setDebugLoc)
     });
@@ -929,11 +929,11 @@ llvm::ShuffleVectorInst *ShuffleVectorInst::Extract(const Napi::Value &value) {
 }
 
 ShuffleVectorInst::ShuffleVectorInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ShuffleVectorInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ShuffleVectorInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ShuffleVectorInst>>();
     shuffleVectorInst = external.Data();
 }
 
@@ -942,14 +942,14 @@ llvm::ShuffleVectorInst *ShuffleVectorInst::getLLVMPrimitive() {
 }
 
 Napi::Value ShuffleVectorInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::VectorType *type = shuffleVectorInst->getType();
     return VectorType::New(env, type);
 }
 
 void ShuffleVectorInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         shuffleVectorInst->setDebugLoc(*location);
         return;
     }
@@ -962,7 +962,7 @@ void ShuffleVectorInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ExtractValueInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ExtractValueInst", {
+    const Napi::Function func = DefineClass(env, "ExtractValueInst", {
             InstanceMethod("getType", &ExtractValueInst::getType),
             InstanceMethod("setDebugLoc", &ExtractValueInst::setDebugLoc)
     });
@@ -988,11 +988,11 @@ llvm::ExtractValueInst *ExtractValueInst::Extract(const Napi::Value &value) {
 }
 
 ExtractValueInst::ExtractValueInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ExtractValueInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ExtractValueInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ExtractValueInst>>();
     extractValueInst = external.Data();
 }
 
@@ -1001,14 +1001,14 @@ llvm::ExtractValueInst *ExtractValueInst::getLLVMPrimitive() {
 }
 
 Napi::Value ExtractValueInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = extractValueInst->getType();
     return Type::New(env, type);
 }
 
 void ExtractValueInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         extractValueInst->setDebugLoc(*location);
         return;
     }
@@ -1021,7 +1021,7 @@ void ExtractValueInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void InsertValueInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "InsertValueInst", {
+    const Napi::Function func = DefineClass(env, "InsertValueInst", {
             InstanceMethod("getType", &InsertValueInst::getType),
             InstanceMethod("setDebugLoc", &InsertValueInst::setDebugLoc)
     });
@@ -1047,11 +1047,11 @@ llvm::InsertValueInst *InsertValueInst::Extract(const Napi::Value &value) {
 }
 
 InsertValueInst::InsertValueInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::InsertValueInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::InsertValueInst>>();
+    const auto external = info[0].As<Napi::External<llvm::InsertValueInst>>();
     insertValueInst = external.Data();
 }
 
@@ -1060,14 +1060,14 @@ llvm::InsertValueInst *InsertValueInst::getLLVMPrimitive() {
 }
 
 Napi::Value InsertValueInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = insertValueInst->getType();
     return Type::New(env, type);
 }
 
 void InsertValueInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         insertValueInst->setDebugLoc(*location);
         return;
     }
@@ -1080,7 +1080,7 @@ void InsertValueInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void PHINode::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "PHINode", {
+    const Napi::Function func = DefineClass(env, "PHINode", {
             InstanceMethod("addIncoming", &PHINode::addIncoming),
             InstanceMethod("getType", &PHINode::getType),
             InstanceMethod("setDebugLoc", &PHINode::setDebugLoc)
@@ -1107,11 +1107,11 @@ llvm::PHINode *PHINode::Extract(const Napi::Value &value) {
 }
 
 PHINode::PHINode(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PHINode::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::PHINode>>();
+    const auto external = info[0].As<Napi::External<llvm::PHINode>>();
     phiNode = external.Data();
 }
 
@@ -1130,14 +1130,14 @@ void PHINode::addIncoming(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value PHINode::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = phiNode->getType();
     return Type::New(env, type);
 }
 
 void PHINode::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         phiNode->setDebugLoc(*location);
         return;
     }
@@ -1150,7 +1150,7 @@ void PHINode::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void LandingPadInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "LandingPadInst", {
+    const Napi::Function func = DefineClass(env, "LandingPadInst", {
             InstanceMethod("setCleanup", &LandingPadInst::setCleanup),
             InstanceMethod("addClause", &LandingPadInst::addClause),
             InstanceMethod("getType", &LandingPadInst::getType),
@@ -1178,11 +1178,11 @@ llvm::LandingPadInst *LandingPadInst::Extract(const Napi::Value &value) {
 }
 
 LandingPadInst::LandingPadInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::LandingPadInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::LandingPadInst>>();
+    const auto external = info[0].As<Napi::External<llvm::LandingPadInst>>();
     lpInst = external.Data();
 }
 
@@ -1191,7 +1191,7 @@ llvm::LandingPadInst *LandingPadInst::getLLVMPrimitive() {
 }
 
 void LandingPadInst::setCleanup(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1 && info[0].IsBoolean()) {
         lpInst->setCleanup(info[0].As<Napi::Boolean>());
         return;
@@ -1200,7 +1200,7 @@ void LandingPadInst::setCleanup(const Napi::CallbackInfo &info) {
 }
 
 void LandingPadInst::addClause(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 1 && Constant::IsClassOf(info[0])) {
         lpInst->addClause(Constant::Extract(info[0]));
         return;
@@ -1209,14 +1209,14 @@ void LandingPadInst::addClause(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value LandingPadInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = lpInst->getType();
     return Type::New(env, type);
 }
 
 void LandingPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         lpInst->setDebugLoc(*location);
         return;
     }
@@ -1229,7 +1229,7 @@ void LandingPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ReturnInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ReturnInst", {
+    const Napi::Function func = DefineClass(env, "ReturnInst", {
             InstanceMethod("getReturnValue", &ReturnInst::getReturnValue),
             InstanceMethod("getType", &ReturnInst::getType),
             InstanceMethod("setDebugLoc", &ReturnInst::setDebugLoc)
@@ -1256,11 +1256,11 @@ llvm::ReturnInst *ReturnInst::Extract(const Napi::Value &value) {
 }
 
 ReturnInst::ReturnInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ReturnInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ReturnInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ReturnInst>>();
     returnInst = external.Data();
 }
 
@@ -1273,14 +1273,14 @@ Napi::Value ReturnInst::getReturnValue(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value ReturnInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = returnInst->getType();
     return Type::New(env, type);
 }
 
 void ReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         returnInst->setDebugLoc(*location);
         return;
     }
@@ -1293,7 +1293,7 @@ void ReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void BranchInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "BranchInst", {
+    const Napi::Function func = DefineClass(env, "BranchInst", {
             InstanceMethod("isUnconditional", &BranchInst::isUnconditional),
             InstanceMethod("isConditional", &BranchInst::isConditional),
             InstanceMethod("getCondition", &BranchInst::getCondition),
@@ -1324,11 +1324,11 @@ llvm::BranchInst *BranchInst::Extract(const Napi::Value &value) {
 }
 
 BranchInst::BranchInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::BranchInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::BranchInst>>();
+    const auto external = info[0].As<Napi::External<llvm::BranchInst>>();
     branchInst = external.Data();
 }
 
@@ -1353,9 +1353,9 @@ Napi::Value BranchInst::getNumSuccessors(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BranchInst::getSuccessor(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 1 && info[0].IsNumber()) {
-        unsigned i = info[0].As<Napi::Number>();
+        const unsigned i = info[0].As<Napi::Number>();
         llvm::BasicBlock *successor = branchInst->getSuccessor(i);
         return BasicBlock::New(env, successor);
     }
@@ -1363,14 +1363,14 @@ Napi::Value BranchInst::getSuccessor(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BranchInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = branchInst->getType();
     return Type::New(env, type);
 }
 
 void BranchInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         branchInst->setDebugLoc(*location);
         return;
     }
@@ -1383,7 +1383,7 @@ void BranchInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void SwitchInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "SwitchInst", {
+    const Napi::Function func = DefineClass(env, "SwitchInst", {
             InstanceMethod("addCase", &SwitchInst::addCase),
             InstanceMethod("getType", &SwitchInst::getType),
             InstanceMethod("setDebugLoc", &SwitchInst::setDebugLoc)
@@ -1410,11 +1410,11 @@ llvm::SwitchInst *SwitchInst::Extract(const Napi::Value &value) {
 }
 
 SwitchInst::SwitchInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::SwitchInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::SwitchInst>>();
+    const auto external = info[0].As<Napi::External<llvm::SwitchInst>>();
     switchInst = external.Data();
 }
 
@@ -1423,8 +1423,8 @@ llvm::SwitchInst *SwitchInst::getLLVMPrimitive() {
 }
 
 void SwitchInst::addCase(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen >= 2 && ConstantInt::IsClassOf(info[0]) && BasicBlock::IsClassOf(info[1])) {
         llvm::ConstantInt *onVal = ConstantInt::Extract(info[0]);
         llvm::BasicBlock *dest = BasicBlock::Extract(info[1]);
@@ -1435,14 +1435,14 @@ void SwitchInst::addCase(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value SwitchInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = switchInst->getType();
     return Type::New(env, type);
 }
 
 void SwitchInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         switchInst->setDebugLoc(*location);
         return;
     }
@@ -1455,7 +1455,7 @@ void SwitchInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void IndirectBrInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "IndirectBrInst", {
+    const Napi::Function func = DefineClass(env, "IndirectBrInst", {
             InstanceMethod("getType", &IndirectBrInst::getType),
             InstanceMethod("setDebugLoc", &IndirectBrInst::setDebugLoc)
     });
@@ -1481,11 +1481,11 @@ llvm::IndirectBrInst *IndirectBrInst::Extract(const Napi::Value &value) {
 }
 
 IndirectBrInst::IndirectBrInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IndirectBrInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::IndirectBrInst>>();
+    const auto external = info[0].As<Napi::External<llvm::IndirectBrInst>>();
     indirectBrInst = external.Data();
 }
 
@@ -1494,14 +1494,14 @@ llvm::IndirectBrInst *IndirectBrInst::getLLVMPrimitive() {
 }
 
 Napi::Value IndirectBrInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = indirectBrInst->getType();
     return Type::New(env, type);
 }
 
 void IndirectBrInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         indirectBrInst->setDebugLoc(*location);
         return;
     }
@@ -1514,7 +1514,7 @@ void IndirectBrInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void InvokeInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "InvokeInst", {
+    const Napi::Function func = DefineClass(env, "InvokeInst", {
             InstanceMethod("getType", &InvokeInst::getType),
             InstanceMethod("setDebugLoc", &InvokeInst::setDebugLoc)
     });
@@ -1540,11 +1540,11 @@ llvm::InvokeInst *InvokeInst::Extract(const Napi::Value &value) {
 }
 
 InvokeInst::InvokeInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::InvokeInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::InvokeInst>>();
+    const auto external = info[0].As<Napi::External<llvm::InvokeInst>>();
     invokeInst = external.Data();
 }
 
@@ -1553,14 +1553,14 @@ llvm::InvokeInst *InvokeInst::getLLVMPrimitive() {
 }
 
 Napi::Value InvokeInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = invokeInst->getType();
     return Type::New(env, type);
 }
 
 void InvokeInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         invokeInst->setDebugLoc(*location);
         return;
     }
@@ -1573,7 +1573,7 @@ void InvokeInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CallBrInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CallBrInst", {
+    const Napi::Function func = DefineClass(env, "CallBrInst", {
             InstanceMethod("getType", &CallBrInst::getType),
             InstanceMethod("setDebugLoc", &CallBrInst::setDebugLoc)
     });
@@ -1599,11 +1599,11 @@ llvm::CallBrInst *CallBrInst::Extract(const Napi::Value &value) {
 }
 
 CallBrInst::CallBrInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CallBrInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CallBrInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CallBrInst>>();
     callBrInst = external.Data();
 }
 
@@ -1612,14 +1612,14 @@ llvm::CallBrInst *CallBrInst::getLLVMPrimitive() {
 }
 
 Napi::Value CallBrInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = callBrInst->getType();
     return Type::New(env, type);
 }
 
 void CallBrInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         callBrInst->setDebugLoc(*location);
         return;
     }
@@ -1632,7 +1632,7 @@ void CallBrInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ResumeInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ResumeInst", {
+    const Napi::Function func = DefineClass(env, "ResumeInst", {
             InstanceMethod("getType", &ResumeInst::getType),
             InstanceMethod("setDebugLoc", &ResumeInst::setDebugLoc)
     });
@@ -1658,11 +1658,11 @@ llvm::ResumeInst *ResumeInst::Extract(const Napi::Value &value) {
 }
 
 ResumeInst::ResumeInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ResumeInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ResumeInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ResumeInst>>();
     resumeInst = external.Data();
 }
 
@@ -1671,14 +1671,14 @@ llvm::ResumeInst *ResumeInst::getLLVMPrimitive() {
 }
 
 Napi::Value ResumeInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = resumeInst->getType();
     return Type::New(env, type);
 }
 
 void ResumeInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         resumeInst->setDebugLoc(*location);
         return;
     }
@@ -1691,7 +1691,7 @@ void ResumeInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CatchSwitchInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CatchSwitchInst", {
+    const Napi::Function func = DefineClass(env, "CatchSwitchInst", {
             InstanceMethod("getType", &CatchSwitchInst::getType),
             InstanceMethod("setDebugLoc", &CatchSwitchInst::setDebugLoc)
     });
@@ -1717,11 +1717,11 @@ llvm::CatchSwitchInst *CatchSwitchInst::Extract(const Napi::Value &value) {
 }
 
 CatchSwitchInst::CatchSwitchInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CatchSwitchInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CatchSwitchInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CatchSwitchInst>>();
     catchSwitchInst = external.Data();
 }
 
@@ -1730,14 +1730,14 @@ llvm::CatchSwitchInst *CatchSwitchInst::getLLVMPrimitive() {
 }
 
 Napi::Value CatchSwitchInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = catchSwitchInst->getType();
     return Type::New(env, type);
 }
 
 void CatchSwitchInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         catchSwitchInst->setDebugLoc(*location);
         return;
     }
@@ -1750,7 +1750,7 @@ void CatchSwitchInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CleanupPadInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CleanupPadInst", {
+    const Napi::Function func = DefineClass(env, "CleanupPadInst", {
             InstanceMethod("getType", &CleanupPadInst::getType),
             InstanceMethod("setDebugLoc", &CleanupPadInst::setDebugLoc)
     });
@@ -1776,11 +1776,11 @@ llvm::CleanupPadInst *CleanupPadInst::Extract(const Napi::Value &value) {
 }
 
 CleanupPadInst::CleanupPadInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CleanupPadInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CleanupPadInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CleanupPadInst>>();
     cleanupPadInst = external.Data();
 }
 
@@ -1789,14 +1789,14 @@ llvm::CleanupPadInst *CleanupPadInst::getLLVMPrimitive() {
 }
 
 Napi::Value CleanupPadInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = cleanupPadInst->getType();
     return Type::New(env, type);
 }
 
 void CleanupPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         cleanupPadInst->setDebugLoc(*location);
         return;
     }
@@ -1809,7 +1809,7 @@ void CleanupPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CatchPadInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CatchPadInst", {
+    const Napi::Function func = DefineClass(env, "CatchPadInst", {
             InstanceMethod("getType", &CatchPadInst::getType),
             InstanceMethod("setDebugLoc", &CatchPadInst::setDebugLoc)
     });
@@ -1835,11 +1835,11 @@ llvm::CatchPadInst *CatchPadInst::Extract(const Napi::Value &value) {
 }
 
 CatchPadInst::CatchPadInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CatchPadInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CatchPadInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CatchPadInst>>();
     catchPadInst = external.Data();
 }
 
@@ -1848,14 +1848,14 @@ llvm::CatchPadInst *CatchPadInst::getLLVMPrimitive() {
 }
 
 Napi::Value CatchPadInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = catchPadInst->getType();
     return Type::New(env, type);
 }
 
 void CatchPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         catchPadInst->setDebugLoc(*location);
         return;
     }
@@ -1868,7 +1868,7 @@ void CatchPadInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CatchReturnInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CatchReturnInst", {
+    const Napi::Function func = DefineClass(env, "CatchReturnInst", {
             InstanceMethod("getType", &CatchReturnInst::getType),
             InstanceMethod("setDebugLoc", &CatchReturnInst::setDebugLoc)
     });
@@ -1894,11 +1894,11 @@ llvm::CatchReturnInst *CatchReturnInst::Extract(const Napi::Value &value) {
 }
 
 CatchReturnInst::CatchReturnInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CatchReturnInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CatchReturnInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CatchReturnInst>>();
     catchReturnInst = external.Data();
 }
 
@@ -1907,14 +1907,14 @@ llvm::CatchReturnInst *CatchReturnInst::getLLVMPrimitive() {
 }
 
 Napi::Value CatchReturnInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = catchReturnInst->getType();
     return Type::New(env, type);
 }
 
 void CatchReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         catchReturnInst->setDebugLoc(*location);
         return;
     }
@@ -1927,7 +1927,7 @@ void CatchReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void CleanupReturnInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "CleanupReturnInst", {
+    const Napi::Function func = DefineClass(env, "CleanupReturnInst", {
             InstanceMethod("getType", &CleanupReturnInst::getType),
             InstanceMethod("setDebugLoc", &CleanupReturnInst::setDebugLoc)
     });
@@ -1953,11 +1953,11 @@ llvm::CleanupReturnInst *CleanupReturnInst::Extract(const Napi::Value &value) {
 }
 
 CleanupReturnInst::CleanupReturnInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::CleanupReturnInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::CleanupReturnInst>>();
+    const auto external = info[0].As<Napi::External<llvm::CleanupReturnInst>>();
     cleanupReturnInst = external.Data();
 }
 
@@ -1966,14 +1966,14 @@ llvm::CleanupReturnInst *CleanupReturnInst::getLLVMPrimitive() {
 }
 
 Napi::Value CleanupReturnInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = cleanupReturnInst->getType();
     return Type::New(env, type);
 }
 
 void CleanupReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         cleanupReturnInst->setDebugLoc(*location);
         return;
     }
@@ -1986,7 +1986,7 @@ void CleanupReturnInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void UnreachableInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "UnreachableInst", {
+    const Napi::Function func = DefineClass(env, "UnreachableInst", {
             InstanceMethod("getType", &UnreachableInst::getType),
             InstanceMethod("setDebugLoc", &UnreachableInst::setDebugLoc)
     });
@@ -2012,11 +2012,11 @@ llvm::UnreachableInst *UnreachableInst::Extract(const Napi::Value &value) {
 }
 
 UnreachableInst::UnreachableInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::UnreachableInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::UnreachableInst>>();
+    const auto external = info[0].As<Napi::External<llvm::UnreachableInst>>();
     unreachableInst = external.Data();
 }
 
@@ -2025,14 +2025,14 @@ llvm::UnreachableInst *UnreachableInst::getLLVMPrimitive() {
 }
 
 Napi::Value UnreachableInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = unreachableInst->getType();
     return Type::New(env, type);
 }
 
 void UnreachableInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         unreachableInst->setDebugLoc(*location);
         return;
     }
@@ -2045,7 +2045,7 @@ void UnreachableInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void TruncInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "TruncInst", {
+    const Napi::Function func = DefineClass(env, "TruncInst", {
             InstanceMethod("getType", &TruncInst::getType),
             InstanceMethod("setDebugLoc", &TruncInst::setDebugLoc)
     });
@@ -2071,11 +2071,11 @@ llvm::TruncInst *TruncInst::Extract(const Napi::Value &value) {
 }
 
 TruncInst::TruncInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::TruncInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::TruncInst>>();
+    const auto external = info[0].As<Napi::External<llvm::TruncInst>>();
     truncInst = external.Data();
 }
 
@@ -2084,14 +2084,14 @@ llvm::TruncInst *TruncInst::getLLVMPrimitive() {
 }
 
 Napi::Value TruncInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = truncInst->getType();
     return Type::New(env, type);
 }
 
 void TruncInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         truncInst->setDebugLoc(*location);
         return;
     }
@@ -2104,7 +2104,7 @@ void TruncInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void ZExtInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ZExtInst", {
+    const Napi::Function func = DefineClass(env, "ZExtInst", {
             InstanceMethod("getType", &ZExtInst::getType),
             InstanceMethod("setDebugLoc", &ZExtInst::setDebugLoc)
     });
@@ -2130,11 +2130,11 @@ llvm::ZExtInst *ZExtInst::Extract(const Napi::Value &value) {
 }
 
 ZExtInst::ZExtInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ZExtInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ZExtInst>>();
+    const auto external = info[0].As<Napi::External<llvm::ZExtInst>>();
     zExtInst = external.Data();
 }
 
@@ -2143,14 +2143,14 @@ llvm::ZExtInst *ZExtInst::getLLVMPrimitive() {
 }
 
 Napi::Value ZExtInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = zExtInst->getType();
     return Type::New(env, type);
 }
 
 void ZExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         zExtInst->setDebugLoc(*location);
         return;
     }
@@ -2163,7 +2163,7 @@ void ZExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void SExtInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "SExtInst", {
+    const Napi::Function func = DefineClass(env, "SExtInst", {
             InstanceMethod("getType", &SExtInst::getType),
             InstanceMethod("setDebugLoc", &SExtInst::setDebugLoc)
     });
@@ -2189,11 +2189,11 @@ llvm::SExtInst *SExtInst::Extract(const Napi::Value &value) {
 }
 
 SExtInst::SExtInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::SExtInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::SExtInst>>();
+    const auto external = info[0].As<Napi::External<llvm::SExtInst>>();
     sExtInst = external.Data();
 }
 
@@ -2202,14 +2202,14 @@ llvm::SExtInst *SExtInst::getLLVMPrimitive() {
 }
 
 Napi::Value SExtInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = sExtInst->getType();
     return Type::New(env, type);
 }
 
 void SExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         sExtInst->setDebugLoc(*location);
         return;
     }
@@ -2222,7 +2222,7 @@ void SExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FPTruncInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FPTruncInst", {
+    const Napi::Function func = DefineClass(env, "FPTruncInst", {
             InstanceMethod("getType", &FPTruncInst::getType),
             InstanceMethod("setDebugLoc", &FPTruncInst::setDebugLoc)
     });
@@ -2248,11 +2248,11 @@ llvm::FPTruncInst *FPTruncInst::Extract(const Napi::Value &value) {
 }
 
 FPTruncInst::FPTruncInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FPTruncInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FPTruncInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FPTruncInst>>();
     fpTruncInst = external.Data();
 }
 
@@ -2261,14 +2261,14 @@ llvm::FPTruncInst *FPTruncInst::getLLVMPrimitive() {
 }
 
 Napi::Value FPTruncInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fpTruncInst->getType();
     return Type::New(env, type);
 }
 
 void FPTruncInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fpTruncInst->setDebugLoc(*location);
         return;
     }
@@ -2281,7 +2281,7 @@ void FPTruncInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FPExtInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FPExtInst", {
+    const Napi::Function func = DefineClass(env, "FPExtInst", {
             InstanceMethod("getType", &FPExtInst::getType),
             InstanceMethod("setDebugLoc", &FPExtInst::setDebugLoc)
     });
@@ -2307,11 +2307,11 @@ llvm::FPExtInst *FPExtInst::Extract(const Napi::Value &value) {
 }
 
 FPExtInst::FPExtInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FPExtInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FPExtInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FPExtInst>>();
     fpExtInst = external.Data();
 }
 
@@ -2320,14 +2320,14 @@ llvm::FPExtInst *FPExtInst::getLLVMPrimitive() {
 }
 
 Napi::Value FPExtInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fpExtInst->getType();
     return Type::New(env, type);
 }
 
 void FPExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fpExtInst->setDebugLoc(*location);
         return;
     }
@@ -2340,7 +2340,7 @@ void FPExtInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void UIToFPInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "UIToFPInst", {
+    const Napi::Function func = DefineClass(env, "UIToFPInst", {
             InstanceMethod("getType", &UIToFPInst::getType),
             InstanceMethod("setDebugLoc", &UIToFPInst::setDebugLoc)
     });
@@ -2366,11 +2366,11 @@ llvm::UIToFPInst *UIToFPInst::Extract(const Napi::Value &value) {
 }
 
 UIToFPInst::UIToFPInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::UIToFPInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::UIToFPInst>>();
+    const auto external = info[0].As<Napi::External<llvm::UIToFPInst>>();
     uiToFPInst = external.Data();
 }
 
@@ -2379,14 +2379,14 @@ llvm::UIToFPInst *UIToFPInst::getLLVMPrimitive() {
 }
 
 Napi::Value UIToFPInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = uiToFPInst->getType();
     return Type::New(env, type);
 }
 
 void UIToFPInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         uiToFPInst->setDebugLoc(*location);
         return;
     }
@@ -2399,7 +2399,7 @@ void UIToFPInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void SIToFPInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "SIToFPInst", {
+    const Napi::Function func = DefineClass(env, "SIToFPInst", {
             InstanceMethod("getType", &SIToFPInst::getType),
             InstanceMethod("setDebugLoc", &SIToFPInst::setDebugLoc)
     });
@@ -2425,11 +2425,11 @@ llvm::SIToFPInst *SIToFPInst::Extract(const Napi::Value &value) {
 }
 
 SIToFPInst::SIToFPInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::SIToFPInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::SIToFPInst>>();
+    const auto external = info[0].As<Napi::External<llvm::SIToFPInst>>();
     siToFPInst = external.Data();
 }
 
@@ -2438,14 +2438,14 @@ llvm::SIToFPInst *SIToFPInst::getLLVMPrimitive() {
 }
 
 Napi::Value SIToFPInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = siToFPInst->getType();
     return Type::New(env, type);
 }
 
 void SIToFPInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         siToFPInst->setDebugLoc(*location);
         return;
     }
@@ -2458,7 +2458,7 @@ void SIToFPInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FPToUIInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FPToUIInst", {
+    const Napi::Function func = DefineClass(env, "FPToUIInst", {
             InstanceMethod("getType", &FPToUIInst::getType),
             InstanceMethod("setDebugLoc", &FPToUIInst::setDebugLoc)
     });
@@ -2484,11 +2484,11 @@ llvm::FPToUIInst *FPToUIInst::Extract(const Napi::Value &value) {
 }
 
 FPToUIInst::FPToUIInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FPToUIInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FPToUIInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FPToUIInst>>();
     fpToUIInst = external.Data();
 }
 
@@ -2497,14 +2497,14 @@ llvm::FPToUIInst *FPToUIInst::getLLVMPrimitive() {
 }
 
 Napi::Value FPToUIInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fpToUIInst->getType();
     return Type::New(env, type);
 }
 
 void FPToUIInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fpToUIInst->setDebugLoc(*location);
         return;
     }
@@ -2517,7 +2517,7 @@ void FPToUIInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FPToSIInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FPToSIInst", {
+    const Napi::Function func = DefineClass(env, "FPToSIInst", {
             InstanceMethod("getType", &FPToSIInst::getType),
             InstanceMethod("setDebugLoc", &FPToSIInst::setDebugLoc)
     });
@@ -2543,11 +2543,11 @@ llvm::FPToSIInst *FPToSIInst::Extract(const Napi::Value &value) {
 }
 
 FPToSIInst::FPToSIInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FPToSIInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FPToSIInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FPToSIInst>>();
     fpToSIInst = external.Data();
 }
 
@@ -2556,14 +2556,14 @@ llvm::FPToSIInst *FPToSIInst::getLLVMPrimitive() {
 }
 
 Napi::Value FPToSIInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = fpToSIInst->getType();
     return Type::New(env, type);
 }
 
 void FPToSIInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         fpToSIInst->setDebugLoc(*location);
         return;
     }
@@ -2576,7 +2576,7 @@ void FPToSIInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void IntToPtrInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "IntToPtrInst", {
+    const Napi::Function func = DefineClass(env, "IntToPtrInst", {
             InstanceMethod("getType", &IntToPtrInst::getType),
             InstanceMethod("setDebugLoc", &IntToPtrInst::setDebugLoc)
     });
@@ -2602,11 +2602,11 @@ llvm::IntToPtrInst *IntToPtrInst::Extract(const Napi::Value &value) {
 }
 
 IntToPtrInst::IntToPtrInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntToPtrInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::IntToPtrInst>>();
+    const auto external = info[0].As<Napi::External<llvm::IntToPtrInst>>();
     intToPtrInst = external.Data();
 }
 
@@ -2615,14 +2615,14 @@ llvm::IntToPtrInst *IntToPtrInst::getLLVMPrimitive() {
 }
 
 Napi::Value IntToPtrInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = intToPtrInst->getType();
     return Type::New(env, type);
 }
 
 void IntToPtrInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         intToPtrInst->setDebugLoc(*location);
         return;
     }
@@ -2635,7 +2635,7 @@ void IntToPtrInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void PtrToIntInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "PtrToIntInst", {
+    const Napi::Function func = DefineClass(env, "PtrToIntInst", {
             InstanceMethod("getType", &PtrToIntInst::getType),
             InstanceMethod("setDebugLoc", &PtrToIntInst::setDebugLoc)
     });
@@ -2661,11 +2661,11 @@ llvm::PtrToIntInst *PtrToIntInst::Extract(const Napi::Value &value) {
 }
 
 PtrToIntInst::PtrToIntInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PtrToIntInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::PtrToIntInst>>();
+    const auto external = info[0].As<Napi::External<llvm::PtrToIntInst>>();
     ptrToIntInst = external.Data();
 }
 
@@ -2674,14 +2674,14 @@ llvm::PtrToIntInst *PtrToIntInst::getLLVMPrimitive() {
 }
 
 Napi::Value PtrToIntInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = ptrToIntInst->getType();
     return Type::New(env, type);
 }
 
 void PtrToIntInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         ptrToIntInst->setDebugLoc(*location);
         return;
     }
@@ -2694,7 +2694,7 @@ void PtrToIntInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void BitCastInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "BitCastInst", {
+    const Napi::Function func = DefineClass(env, "BitCastInst", {
             InstanceMethod("getType", &BitCastInst::getType),
             InstanceMethod("setDebugLoc", &BitCastInst::setDebugLoc)
     });
@@ -2720,11 +2720,11 @@ llvm::BitCastInst *BitCastInst::Extract(const Napi::Value &value) {
 }
 
 BitCastInst::BitCastInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::BitCastInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::BitCastInst>>();
+    const auto external = info[0].As<Napi::External<llvm::BitCastInst>>();
     bitCastInst = external.Data();
 }
 
@@ -2733,14 +2733,14 @@ llvm::BitCastInst *BitCastInst::getLLVMPrimitive() {
 }
 
 Napi::Value BitCastInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = bitCastInst->getType();
     return Type::New(env, type);
 }
 
 void BitCastInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         bitCastInst->setDebugLoc(*location);
         return;
     }
@@ -2753,7 +2753,7 @@ void BitCastInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void AddrSpaceCastInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "AddrSpaceCastInst", {
+    const Napi::Function func = DefineClass(env, "AddrSpaceCastInst", {
             InstanceMethod("getType", &AddrSpaceCastInst::getType),
             InstanceMethod("setDebugLoc", &AddrSpaceCastInst::setDebugLoc)
     });
@@ -2779,11 +2779,11 @@ llvm::AddrSpaceCastInst *AddrSpaceCastInst::Extract(const Napi::Value &value) {
 }
 
 AddrSpaceCastInst::AddrSpaceCastInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::AddrSpaceCastInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::AddrSpaceCastInst>>();
+    const auto external = info[0].As<Napi::External<llvm::AddrSpaceCastInst>>();
     addrSpaceCastInst = external.Data();
 }
 
@@ -2792,14 +2792,14 @@ llvm::AddrSpaceCastInst *AddrSpaceCastInst::getLLVMPrimitive() {
 }
 
 Napi::Value AddrSpaceCastInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = addrSpaceCastInst->getType();
     return Type::New(env, type);
 }
 
 void AddrSpaceCastInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         addrSpaceCastInst->setDebugLoc(*location);
         return;
     }
@@ -2812,7 +2812,7 @@ void AddrSpaceCastInst::setDebugLoc(const Napi::CallbackInfo &info) {
 
 void FreezeInst::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FreezeInst", {
+    const Napi::Function func = DefineClass(env, "FreezeInst", {
             InstanceMethod("getType", &FreezeInst::getType),
             InstanceMethod("setDebugLoc", &FreezeInst::setDebugLoc)
     });
@@ -2838,11 +2838,11 @@ llvm::FreezeInst *FreezeInst::Extract(const Napi::Value &value) {
 }
 
 FreezeInst::FreezeInst(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FreezeInst::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FreezeInst>>();
+    const auto external = info[0].As<Napi::External<llvm::FreezeInst>>();
     freezeInst = external.Data();
 }
 
@@ -2851,14 +2851,14 @@ llvm::FreezeInst *FreezeInst::getLLVMPrimitive() {
 }
 
 Napi::Value FreezeInst::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = freezeInst->getType();
     return Type::New(env, type);
 }
 
 void FreezeInst::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         freezeInst->setDebugLoc(*location);
         return;
     }

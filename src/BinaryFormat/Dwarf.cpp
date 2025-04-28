@@ -1,12 +1,12 @@
 #include "BinaryFormat/Dwarf.h"
 
 void dwarf::Init(Napi::Env env, Napi::Object &exports) {
-    Napi::Object dwarfNS = Napi::Object::New(env);
+    const Napi::Object dwarfNS = Napi::Object::New(env);
 
-    Napi::Object constantsNS = Napi::Object::New(env);
+    const Napi::Object constantsNS = Napi::Object::New(env);
     constantsNS.Set("DWARF_VERSION", Napi::Number::New(env, llvm::dwarf::LLVMConstants::DWARF_VERSION));
 
-    Napi::Object typeKindNS = Napi::Object::New(env);
+    const Napi::Object typeKindNS = Napi::Object::New(env);
     typeKindNS.Set("DW_ATE_address", Napi::Number::New(env, llvm::dwarf::TypeKind::DW_ATE_address));
     typeKindNS.Set("DW_ATE_boolean", Napi::Number::New(env, llvm::dwarf::TypeKind::DW_ATE_boolean));
     typeKindNS.Set("DW_ATE_complex_float", Napi::Number::New(env, llvm::dwarf::TypeKind::DW_ATE_complex_float));
@@ -28,7 +28,7 @@ void dwarf::Init(Napi::Env env, Napi::Object &exports) {
     typeKindNS.Set("DW_ATE_lo_user", Napi::Number::New(env, llvm::dwarf::TypeKind::DW_ATE_lo_user));
     typeKindNS.Set("DW_ATE_hi_user", Napi::Number::New(env, llvm::dwarf::TypeKind::DW_ATE_hi_user));
 
-    Napi::Object sourceLanguageNS = Napi::Object::New(env);
+    const Napi::Object sourceLanguageNS = Napi::Object::New(env);
     sourceLanguageNS.Set("DW_LANG_C89", Napi::Number::New(env, llvm::dwarf::SourceLanguage::DW_LANG_C89));
     sourceLanguageNS.Set("DW_LANG_C", Napi::Number::New(env, llvm::dwarf::SourceLanguage::DW_LANG_C));
     sourceLanguageNS.Set("DW_LANG_Ada83", Napi::Number::New(env, llvm::dwarf::SourceLanguage::DW_LANG_Ada83));

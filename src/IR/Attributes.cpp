@@ -4,7 +4,7 @@
 void Attribute::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
 
-    Napi::Object attributeKinds = Napi::Object::New(env);
+    const Napi::Object attributeKinds = Napi::Object::New(env);
     attributeKinds.Set("AlwaysInline", Napi::Number::New(env, llvm::Attribute::AttrKind::AlwaysInline));
     attributeKinds.Set("ArgMemOnly", Napi::Number::New(env, llvm::Attribute::AttrKind::ArgMemOnly));
     attributeKinds.Set("Builtin", Napi::Number::New(env, llvm::Attribute::AttrKind::Builtin));
@@ -88,7 +88,7 @@ void Attribute::Init(Napi::Env env, Napi::Object &exports) {
     attributeKinds.Set("StackAlignment", Napi::Number::New(env, llvm::Attribute::AttrKind::StackAlignment));
     attributeKinds.Set("VScaleRange", Napi::Number::New(env, llvm::Attribute::AttrKind::VScaleRange));
 
-    Napi::Function func = DefineClass(env, "Attribute", {
+    const Napi::Function func = DefineClass(env, "Attribute", {
             StaticValue("AttrKind", attributeKinds),
             StaticMethod("get", &Attribute::get)
     });
@@ -111,11 +111,11 @@ llvm::Attribute Attribute::Extract(const Napi::Value &value) {
 }
 
 Attribute::Attribute(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
 
     if (argsLen == 1 && info[0].IsExternal()) {
-        auto external = info[0].As<Napi::External<llvm::AttributeImpl>>();
+        const auto external = info[0].As<Napi::External<llvm::AttributeImpl>>();
         attrImpl = external.Data();
     } else {
         throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::constructor);
@@ -127,8 +127,8 @@ llvm::Attribute Attribute::getLLVMPrimitive() {
 }
 
 Napi::Value Attribute::get(const Napi::CallbackInfo &info) {
-    auto env = info.Env();
-    unsigned argsLen = info.Length();
+    const auto env = info.Env();
+    const unsigned argsLen = info.Length();
     bool isMatch = false;
     llvm::Attribute attribute;
     if (argsLen >= 2 && argsLen <= 3 && LLVMContext::IsClassOf(info[0])) {
@@ -139,14 +139,14 @@ Napi::Value Attribute::get(const Napi::CallbackInfo &info) {
                 rawAttrKind > llvm::Attribute::AttrKind::LastEnumAttr) {
                 throw Napi::TypeError::New(env, ErrMsg::Class::Attribute::invalidAttrKind);
             }
-            auto attrKind = static_cast<llvm::Attribute::AttrKind>(rawAttrKind);
+            const auto attrKind = static_cast<llvm::Attribute::AttrKind>(rawAttrKind);
             if (argsLen == 2) {
                 isMatch = true;
                 attribute = llvm::Attribute::get(context, attrKind);
             } else if (argsLen == 3) {
                 if (info[2].IsNumber()) {
                     isMatch = true;
-                    uint64_t value = info[2].As<Napi::Number>().Int64Value();
+                    const uint64_t value = info[2].As<Napi::Number>().Int64Value();
                     attribute = llvm::Attribute::get(context, attrKind, value);
                 } else if (Type::IsClassOf(info[2])) {
                     isMatch = true;
@@ -155,13 +155,13 @@ Napi::Value Attribute::get(const Napi::CallbackInfo &info) {
                 }
             }
         } else if (info[1].IsString()) {
-            std::string attrKind = info[1].As<Napi::String>();
+            const std::string attrKind = info[1].As<Napi::String>();
             if (argsLen == 2) {
                 isMatch = true;
                 attribute = llvm::Attribute::get(context, attrKind);
             } else if (argsLen == 3 && info[2].IsString()) {
                 isMatch = true;
-                std::string value = info[2].As<Napi::String>();
+                const std::string value = info[2].As<Napi::String>();
                 attribute = llvm::Attribute::get(context, attrKind, value);
             }
         }

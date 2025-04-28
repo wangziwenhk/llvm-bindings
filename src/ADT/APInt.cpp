@@ -3,7 +3,7 @@
 
 void APInt::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "APInt", {});
+    const Napi::Function func = DefineClass(env, "APInt", {});
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
     exports.Set("APInt", func);
@@ -18,13 +18,13 @@ llvm::APInt &APInt::Extract(const Napi::Value &value) {
 }
 
 APInt::APInt(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (!info.IsConstructCall() || argsLen < 2 || !info[0].IsNumber() || !info[1].IsNumber() || argsLen >= 3 && !info[2].IsBoolean()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::APInt::constructor);
     }
-    unsigned numBits = info[0].As<Napi::Number>();
-    uint64_t val = info[1].As<Napi::Number>().Int64Value();
+    const unsigned numBits = info[0].As<Napi::Number>();
+    const uint64_t val = info[1].As<Napi::Number>().Int64Value();
     bool isSigned = false;
     if (argsLen >= 3) {
         isSigned = info[2].As<Napi::Boolean>();

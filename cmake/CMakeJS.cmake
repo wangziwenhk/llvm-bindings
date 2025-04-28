@@ -41,20 +41,25 @@ endif()
 string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
 
 if (CMAKE_BUILD_TYPE_LOWER STREQUAL "debug")
-    exec_program(
-            ${CMakeJS}
-            ${CMAKE_CURRENT_SOURCE_DIR}
-            ARGS print-configure --debug
-            OUTPUT_VARIABLE CMAKE_JS_OUTPUT
+    execute_process(
+        COMMAND ${CMakeJS} print-configure --debug
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE CMAKE_JS_OUTPUT
+        RESULT_VARIABLE CMAKE_JS_RESULT
     )
 else ()
-    exec_program(
-            ${CMakeJS}
-            ${CMAKE_CURRENT_SOURCE_DIR}
-            ARGS print-configure
-            OUTPUT_VARIABLE CMAKE_JS_OUTPUT
+    execute_process(
+        COMMAND ${CMakeJS} print-configure
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE CMAKE_JS_OUTPUT
+        RESULT_VARIABLE CMAKE_JS_RESULT
     )
 endif ()
+
+# check
+if(NOT CMAKE_JS_RESULT EQUAL 0)
+    message(FATAL_ERROR "Failed to execute cmake-js: ${CMAKE_JS_RESULT}")
+endif()
 
 get_variable(${CMAKE_JS_OUTPUT} "CMAKE_JS_INC" CMAKE_JS_INC)
 get_variable(${CMAKE_JS_OUTPUT} "CMAKE_JS_LIB" CMAKE_JS_LIB)

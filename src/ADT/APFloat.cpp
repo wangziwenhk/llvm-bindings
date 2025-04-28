@@ -3,7 +3,7 @@
 
 void APFloat::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "APFloat", {});
+    const Napi::Function func = DefineClass(env, "APFloat", {});
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
     exports.Set("APFloat", func);
@@ -18,11 +18,11 @@ llvm::APFloat &APFloat::Extract(const Napi::Value &value) {
 }
 
 APFloat::APFloat(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::APFloat::constructor);
     }
-    double value = info[0].As<Napi::Number>();
+    const double value = info[0].As<Napi::Number>();
     apFloat = new llvm::APFloat(value);
 }
 

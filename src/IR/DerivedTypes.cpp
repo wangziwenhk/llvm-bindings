@@ -7,7 +7,7 @@
 
 void IntegerType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "IntegerType", {
+    const Napi::Function func = DefineClass(env, "IntegerType", {
             StaticMethod("get", &IntegerType::get),
             InstanceMethod("isStructTy", &IntegerType::isStructTy),
             InstanceMethod("isIntegerTy", &IntegerType::isIntegerTy),
@@ -36,11 +36,11 @@ llvm::IntegerType *IntegerType::Extract(const Napi::Value &value) {
 }
 
 IntegerType::IntegerType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntegerType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::IntegerType>>();
+    const auto external = info[0].As<Napi::External<llvm::IntegerType>>();
     integerType = external.Data();
 }
 
@@ -49,12 +49,12 @@ llvm::IntegerType *IntegerType::getLLVMPrimitive() {
 }
 
 Napi::Value IntegerType::get(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() < 2 || !LLVMContext::IsClassOf(info[0]) || !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntegerType::get);
     }
     llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
-    unsigned numBits = info[1].As<Napi::Number>();
+    const unsigned numBits = info[1].As<Napi::Number>();
     llvm::IntegerType *integerType = llvm::IntegerType::get(context, numBits);
     return IntegerType::New(env, integerType);
 }
@@ -64,11 +64,11 @@ Napi::Value IntegerType::isStructTy(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value IntegerType::isIntegerTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntegerType::isIntegerTy);
     }
-    bool result = info.Length() == 0 ? integerType->isIntegerTy() : integerType->isIntegerTy(info[0].As<Napi::Number>());
+    const bool result = info.Length() == 0 ? integerType->isIntegerTy() : integerType->isIntegerTy(info[0].As<Napi::Number>());
     return Napi::Boolean::New(env, result);
 }
 
@@ -86,7 +86,7 @@ Napi::Value IntegerType::getTypeID(const Napi::CallbackInfo &info) {
 
 void FunctionType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FunctionType", {
+    const Napi::Function func = DefineClass(env, "FunctionType", {
             StaticMethod("get", &FunctionType::get),
             InstanceMethod("isVoidTy", &FunctionType::isVoidTy),
             InstanceMethod("getTypeID", &FunctionType::getTypeID)
@@ -113,11 +113,11 @@ llvm::FunctionType *FunctionType::Extract(const Napi::Value &value) {
 }
 
 FunctionType::FunctionType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FunctionType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::FunctionType>>();
+    const auto external = info[0].As<Napi::External<llvm::FunctionType>>();
     functionType = external.Data();
 }
 
@@ -126,18 +126,18 @@ llvm::FunctionType *FunctionType::getLLVMPrimitive() {
 }
 
 Napi::Value FunctionType::get(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (!(argsLen == 2 && Type::IsClassOf(info[0]) && info[1].IsBoolean()) &&
         !(argsLen >= 3 && Type::IsClassOf(info[0]) && info[1].IsArray() && info[2].IsBoolean())) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FunctionType::get);
     }
     llvm::Type *returnType = Type::Extract(info[0]);
-    bool isVarArg = info[argsLen == 2 ? 1 : 2].As<Napi::Boolean>();
+    const bool isVarArg = info[argsLen == 2 ? 1 : 2].As<Napi::Boolean>();
     llvm::FunctionType *functionType;
     if (argsLen >= 3) {
-        auto paramsArray = info[1].As<Napi::Array>();
-        unsigned numParams = paramsArray.Length();
+        const auto paramsArray = info[1].As<Napi::Array>();
+        const unsigned numParams = paramsArray.Length();
         std::vector<llvm::Type *> paramTypes(numParams);
         for (unsigned i = 0; i < numParams; ++i) {
             paramTypes[i] = Type::Extract(paramsArray.Get(i));
@@ -163,7 +163,7 @@ Napi::Value FunctionType::getTypeID(const Napi::CallbackInfo &info) {
 
 void FunctionCallee::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "FunctionCallee", {
+    const Napi::Function func = DefineClass(env, "FunctionCallee", {
             InstanceMethod("getFunctionType", &FunctionCallee::getFunctionType),
             InstanceMethod("getCallee", &FunctionCallee::getCallee)
     });
@@ -189,7 +189,7 @@ llvm::FunctionCallee FunctionCallee::Extract(const Napi::Value &value) {
 }
 
 FunctionCallee::FunctionCallee(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::FunctionCallee::constructor);
     }
@@ -217,7 +217,7 @@ Napi::Value FunctionCallee::getCallee(const Napi::CallbackInfo &info) {
 
 void StructType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "StructType", {
+    const Napi::Function func = DefineClass(env, "StructType", {
             StaticMethod("create", &StructType::create),
             StaticMethod("get", &StructType::get),
             StaticMethod("getTypeByName", &StructType::getTypeByName),
@@ -256,11 +256,11 @@ llvm::StructType *StructType::Extract(const Napi::Value &value) {
 }
 
 StructType::StructType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::StructType>>();
+    const auto external = info[0].As<Napi::External<llvm::StructType>>();
     structType = external.Data();
 }
 
@@ -269,8 +269,8 @@ llvm::StructType *StructType::getLLVMPrimitive() {
 }
 
 Napi::Value StructType::create(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (!(argsLen == 2 && LLVMContext::IsClassOf(info[0]) && info[1].IsString()) &&
         !(argsLen >= 3 && LLVMContext::IsClassOf(info[0]) && info[1].IsArray() && info[2].IsString())) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::create);
@@ -279,8 +279,8 @@ Napi::Value StructType::create(const Napi::CallbackInfo &info) {
     const std::string &name = info[argsLen == 2 ? 1 : 2].As<Napi::String>();
     llvm::StructType *structType;
     if (argsLen >= 3) {
-        auto eleTypesArray = info[1].As<Napi::Array>();
-        unsigned numElements = eleTypesArray.Length();
+        const auto eleTypesArray = info[1].As<Napi::Array>();
+        const unsigned numElements = eleTypesArray.Length();
         std::vector<llvm::Type *> elementTypes(numElements);
         for (unsigned i = 0; i < numElements; ++i) {
             elementTypes[i] = Type::Extract(eleTypesArray.Get(i));
@@ -293,8 +293,8 @@ Napi::Value StructType::create(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value StructType::get(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (!(argsLen == 1 && LLVMContext::IsClassOf(info[0])) &&
         !(argsLen == 2 && LLVMContext::IsClassOf(info[0]) && info[1].IsArray())) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::get);
@@ -302,8 +302,8 @@ Napi::Value StructType::get(const Napi::CallbackInfo &info) {
     llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
     llvm::StructType *structType;
     if (argsLen == 2) {
-        auto eleTypesArray = info[1].As<Napi::Array>();
-        unsigned numElements = eleTypesArray.Length();
+        const auto eleTypesArray = info[1].As<Napi::Array>();
+        const unsigned numElements = eleTypesArray.Length();
         std::vector<llvm::Type *> elementTypes(numElements);
         for (unsigned i = 0; i < numElements; ++i) {
             elementTypes[i] = Type::Extract(eleTypesArray.Get(i));
@@ -316,7 +316,7 @@ Napi::Value StructType::get(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value StructType::getTypeByName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 2 && LLVMContext::IsClassOf(info[0]) && info[1].IsString()) {
         llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
         const std::string name = info[0].As<Napi::String>();
@@ -330,12 +330,12 @@ Napi::Value StructType::getTypeByName(const Napi::CallbackInfo &info) {
 }
 
 void StructType::setBody(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsArray()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::setBody);
     }
-    auto eleTypesArray = info[0].As<Napi::Array>();
-    unsigned numElements = eleTypesArray.Length();
+    const auto eleTypesArray = info[0].As<Napi::Array>();
+    const unsigned numElements = eleTypesArray.Length();
     std::vector<llvm::Type *> elementTypes(numElements);
     for (unsigned i = 0; i < numElements; ++i) {
         elementTypes[i] = Type::Extract(eleTypesArray.Get(i));
@@ -344,7 +344,7 @@ void StructType::setBody(const Napi::CallbackInfo &info) {
 }
 
 void StructType::setName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsString()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::setName);
     }
@@ -373,7 +373,7 @@ Napi::Value StructType::isLiteral(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value StructType::getPointerTo(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 1 && !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::StructType::getPointerTo);
     }
@@ -390,11 +390,11 @@ Napi::Value StructType::isStructTy(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value StructType::isIntegerTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntegerType::isIntegerTy);
     }
-    bool result = info.Length() == 0 ? structType->isIntegerTy() : structType->isIntegerTy(info[0].As<Napi::Number>());
+    const bool result = info.Length() == 0 ? structType->isIntegerTy() : structType->isIntegerTy(info[0].As<Napi::Number>());
     return Napi::Boolean::New(env, result);
 }
 
@@ -412,7 +412,7 @@ Napi::Value StructType::getTypeID(const Napi::CallbackInfo &info) {
 
 void ArrayType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "ArrayType", {
+    const Napi::Function func = DefineClass(env, "ArrayType", {
             StaticMethod("get", &ArrayType::get),
             StaticMethod("isValidElementType", &ArrayType::isValidElementType),
             InstanceMethod("getNumElements", &ArrayType::getNumElements),
@@ -443,11 +443,11 @@ llvm::ArrayType *ArrayType::Extract(const Napi::Value &value) {
 }
 
 ArrayType::ArrayType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::ArrayType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::ArrayType>>();
+    const auto external = info[0].As<Napi::External<llvm::ArrayType>>();
     arrayType = external.Data();
 }
 
@@ -456,17 +456,17 @@ llvm::ArrayType *ArrayType::getLLVMPrimitive() {
 }
 
 Napi::Value ArrayType::get(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 2 && Type::IsClassOf(info[0]) && info[1].IsNumber()) {
         llvm::Type *elemType = Type::Extract(info[0]);
-        unsigned numElements = info[1].As<Napi::Number>();
+        const unsigned numElements = info[1].As<Napi::Number>();
         return ArrayType::New(env, llvm::ArrayType::get(elemType, numElements));
     }
     throw Napi::TypeError::New(env, ErrMsg::Class::ArrayType::get);
 }
 
 Napi::Value ArrayType::isValidElementType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 1 && Type::IsClassOf(info[0])) {
         llvm::Type *elemType = Type::Extract(info[0]);
         return Napi::Boolean::New(env, llvm::ArrayType::isValidElementType(elemType));
@@ -500,7 +500,7 @@ Napi::Value ArrayType::getTypeID(const Napi::CallbackInfo &info) {
 
 void VectorType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "VectorType", {
+    const Napi::Function func = DefineClass(env, "VectorType", {
             InstanceMethod("isStructTy", &VectorType::isStructTy),
             InstanceMethod("isVoidTy", &VectorType::isVoidTy),
             InstanceMethod("getTypeID", &VectorType::getTypeID)
@@ -527,11 +527,11 @@ llvm::VectorType *VectorType::Extract(const Napi::Value &value) {
 }
 
 VectorType::VectorType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::VectorType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::VectorType>>();
+    const auto external = info[0].As<Napi::External<llvm::VectorType>>();
     vectorType = external.Data();
 }
 
@@ -557,7 +557,7 @@ Napi::Value VectorType::getTypeID(const Napi::CallbackInfo &info) {
 
 void PointerType::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "PointerType", {
+    const Napi::Function func = DefineClass(env, "PointerType", {
             StaticMethod("get", &PointerType::get),
             StaticMethod("getUnqual", &PointerType::getUnqual),
             InstanceMethod("isPointerTy", &PointerType::isPointerTy),
@@ -588,27 +588,27 @@ llvm::PointerType *PointerType::Extract(const Napi::Value &value) {
 }
 
 PointerType::PointerType(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::PointerType>>();
+    const auto external = info[0].As<Napi::External<llvm::PointerType>>();
     pointerType = external.Data();
 }
 
 Napi::Value PointerType::get(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() < 2 || !Type::IsClassOf(info[0]) || !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::get);
     }
     llvm::Type *type = Type::Extract(info[0]);
-    uint32_t addrSpace = info[1].As<Napi::Number>();
+    const uint32_t addrSpace = info[1].As<Napi::Number>();
     llvm::PointerType *pointerType = llvm::PointerType::get(type, addrSpace);
     return PointerType::New(env, pointerType);
 }
 
 Napi::Value PointerType::getUnqual(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !Type::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::PointerType::getUnqual);
     }
@@ -630,11 +630,11 @@ Napi::Value PointerType::isStructTy(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value PointerType::isIntegerTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::IntegerType::isIntegerTy);
     }
-    bool result = info.Length() == 0 ? pointerType->isIntegerTy() : pointerType->isIntegerTy(info[0].As<Napi::Number>());
+    const bool result = info.Length() == 0 ? pointerType->isIntegerTy() : pointerType->isIntegerTy(info[0].As<Napi::Number>());
     return Napi::Boolean::New(env, result);
 }
 

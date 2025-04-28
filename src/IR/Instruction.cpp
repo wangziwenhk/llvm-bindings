@@ -3,7 +3,7 @@
 
 void Instruction::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "Instruction", {
+    const Napi::Function func = DefineClass(env, "Instruction", {
             InstanceMethod("use_back", &Instruction::userBack),
             InstanceMethod("getParent", &Instruction::getParent),
             InstanceMethod("getModule", &Instruction::getModule),
@@ -126,11 +126,11 @@ llvm::Instruction *Instruction::Extract(const Napi::Value &value) {
 }
 
 Instruction::Instruction(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Instruction::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::Instruction>>();
+    const auto external = info[0].As<Napi::External<llvm::Instruction>>();
     inst = external.Data();
 }
 
@@ -139,7 +139,7 @@ llvm::Instruction *Instruction::getLLVMPrimitive() {
 }
 
 Napi::Value Instruction::userBack(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Instruction *userInst = inst->user_back();
     if (userInst) {
         return Instruction::New(env, userInst);
@@ -148,7 +148,7 @@ Napi::Value Instruction::userBack(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Instruction::getParent(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::BasicBlock *basicBlock = inst->getParent();
     if (basicBlock) {
         return BasicBlock::New(env, basicBlock);
@@ -157,7 +157,7 @@ Napi::Value Instruction::getParent(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Instruction::getModule(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Module *module = inst->getModule();
     if (module) {
         return Module::New(env, module);
@@ -166,7 +166,7 @@ Napi::Value Instruction::getModule(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Instruction::getFunction(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Function *function = inst->getFunction();
     if (function) {
         return Function::New(env, function);
@@ -175,14 +175,14 @@ Napi::Value Instruction::getFunction(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Instruction::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = inst->getType();
     return Type::New(env, type);
 }
 
 void Instruction::setDebugLoc(const Napi::CallbackInfo &info) {
     if (info.Length() == 1 && DebugLoc::IsClassOf(info[0])) {
-        llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
+        const llvm::DebugLoc *location = DebugLoc::Extract(info[0]);
         inst->setDebugLoc(*location);
         return;
     }

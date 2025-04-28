@@ -3,7 +3,7 @@
 
 void User::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "User", {
+    const Napi::Function func = DefineClass(env, "User", {
             InstanceMethod("getOperand", &User::getOperand),
             InstanceMethod("setOperand", &User::setOperand),
             InstanceMethod("getNumOperands", &User::getNumOperands),
@@ -36,11 +36,11 @@ llvm::User *User::Extract(const Napi::Value &value) {
 }
 
 User::User(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::User::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::User>>();
+    const auto external = info[0].As<Napi::External<llvm::User>>();
     user = external.Data();
 }
 
@@ -49,33 +49,33 @@ llvm::User *User::getLLVMPrimitive() {
 }
 
 Napi::Value User::getOperand(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::User::getOperand);
     }
-    unsigned i = info[0].As<Napi::Number>();
+    const unsigned i = info[0].As<Napi::Number>();
     llvm::Value *operand = user->getOperand(i);
     return Value::New(env, operand);
 }
 
 void User::setOperand(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() < 2 || info[0].IsNumber() || !Value::IsClassOf(info[1])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::User::setOperand);
     }
-    unsigned i = info[0].As<Napi::Number>();
+    const unsigned i = info[0].As<Napi::Number>();
     llvm::Value *value = Value::Extract(info[1]);
     user->setOperand(i, value);
 }
 
 Napi::Value User::getNumOperands(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned num = user->getNumOperands();
+    const Napi::Env env = info.Env();
+    const unsigned num = user->getNumOperands();
     return Napi::Number::New(env, num);
 }
 
 Napi::Value User::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = user->getType();
     return Type::New(env, type);
 }

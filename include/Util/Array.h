@@ -27,7 +27,7 @@ inline bool assembleArray(Napi::Array sources, std::vector<LLVMType> &destinatio
 //===--------------------------------------------------------------------===//
 
 inline bool assembleArray(Napi::Array sources, std::vector<int64_t> &destinations) {
-    unsigned size = sources.Length();
+    const unsigned size = sources.Length();
     destinations.resize(size);
     for (unsigned i = 0; i < size; ++i) {
         if (!sources.Get(i).IsNumber()) {

@@ -214,6 +214,12 @@ private:
 
     static Napi::Value getUIToFP(const Napi::CallbackInfo& info);
 
+    static Napi::Value getSIToFP(const Napi::CallbackInfo& info);
+
+    static Napi::Value getFPToUI(const Napi::CallbackInfo& info);
+
+    static Napi::Value getFPToSI(const Napi::CallbackInfo& info);
+
     static Napi::Value getBitCast(const Napi::CallbackInfo &info);
 
     Napi::Value getType(const Napi::CallbackInfo &info);

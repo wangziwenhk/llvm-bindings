@@ -1,6 +1,6 @@
 {
     "name": "llvm-bindings",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "description": "LLVM bindings for Node.js/JavaScript/TypeScript",
     "keywords": [
         "llvm",
@@ -12,7 +12,7 @@
         "llvm-javascript"
     ],
     "license": "MIT",
-    "author": "ApsarasX",
+    "author": "wangziwenhk",
     "main": "index.js",
     "types": "llvm-bindings.d.ts",
     "repository": {

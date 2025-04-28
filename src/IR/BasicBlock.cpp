@@ -3,7 +3,7 @@
 
 void BasicBlock::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "BasicBlock", {
+    const Napi::Function func = DefineClass(env, "BasicBlock", {
             StaticMethod("Create", &BasicBlock::Create),
             InstanceMethod("getParent", &BasicBlock::getParent),
             InstanceMethod("getModule", &BasicBlock::getModule),
@@ -38,17 +38,17 @@ llvm::BasicBlock *BasicBlock::Extract(const Napi::Value &value) {
 }
 
 BasicBlock::BasicBlock(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::BasicBlock::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::BasicBlock>>();
+    const auto external = info[0].As<Napi::External<llvm::BasicBlock>>();
     basicBlock = external.Data();
 }
 
 Napi::Value BasicBlock::Create(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 0 ||
         !LLVMContext::IsClassOf(info[0]) ||
         argsLen >= 2 && !(info[1].IsString() || info[1].IsUndefined() || info[1].IsNull()) ||
@@ -78,7 +78,7 @@ llvm::BasicBlock *BasicBlock::getLLVMPrimitive() {
 }
 
 Napi::Value BasicBlock::getParent(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Function *function = basicBlock->getParent();
     if (function) {
         return Function::New(env, function);
@@ -87,7 +87,7 @@ Napi::Value BasicBlock::getParent(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BasicBlock::getModule(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Module *module = basicBlock->getModule();
     if (module) {
         return Module::New(env, module);
@@ -96,7 +96,7 @@ Napi::Value BasicBlock::getModule(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BasicBlock::getTerminator(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Instruction *termInst = basicBlock->getTerminator();
     if (termInst) {
         return Instruction::New(env, termInst);
@@ -105,7 +105,7 @@ Napi::Value BasicBlock::getTerminator(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BasicBlock::getFirstNonPHI(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Instruction *nonPHIInst = basicBlock->getFirstNonPHI();
     if (nonPHIInst) {
         return Instruction::New(env, nonPHIInst);
@@ -114,8 +114,8 @@ Napi::Value BasicBlock::getFirstNonPHI(const Napi::CallbackInfo &info) {
 }
 
 void BasicBlock::insertInto(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 1 && Function::IsClassOf(info[0]) ||
         argsLen == 2 && Function::IsClassOf(info[0]) && BasicBlock::IsClassOf(info[1])) {
         llvm::Function *parent = Function::Extract(info[0]);
@@ -139,13 +139,16 @@ Napi::Value BasicBlock::useEmpty(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value BasicBlock::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = basicBlock->getType();
     return Type::New(env, type);
 }
 
-// TODO: more consideration for security
 void BasicBlock::deleteSelf(const Napi::CallbackInfo &info) {
+    const Napi::Env env = info.Env();
+    if (!basicBlock) {
+        throw Napi::Error::New(env, "Attempt to delete a null BasicBlock");
+    }
     delete basicBlock;
     basicBlock = nullptr;
 }

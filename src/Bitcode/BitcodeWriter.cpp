@@ -6,12 +6,12 @@
 #include "Util/index.h"
 
 static void WriteBitcodeToFile(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() < 2 || !Module::IsClassOf(info[0]) || !info[1].IsString()) {
         throw Napi::TypeError::New(env, ErrMsg::Function::WriteBitcodeToFile);
     }
-    llvm::Module *module = Module::Extract(info[0]);
-    std::string fileName = info[1].As<Napi::String>();
+    const llvm::Module *module = Module::Extract(info[0]);
+    const std::string fileName = info[1].As<Napi::String>();
     std::error_code errorCode;
     llvm::raw_fd_ostream byteCodeFile(fileName, errorCode);
     if (errorCode) {

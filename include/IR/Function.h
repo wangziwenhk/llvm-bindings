@@ -19,6 +19,22 @@ public:
 
     llvm::Function *getLLVMPrimitive();
 
+    Napi::Value hasLazyArguments(const Napi::CallbackInfo &info);
+
+    Napi::Value isMaterializable(const Napi::CallbackInfo &info);
+
+    void setIsMaterializable(const Napi::CallbackInfo &info);
+
+    Napi::Value getIntrinsicID(const Napi::CallbackInfo &info);
+
+    Napi::Value isIntrinsic(const Napi::CallbackInfo &info);
+
+    static Napi::Value isTargetIntrinsic_static(const Napi::CallbackInfo &info);
+
+    Napi::Value isTargetIntrinsic(const Napi::CallbackInfo &info);
+
+    Napi::Value isConstrainedFPIntrinsic(const Napi::CallbackInfo &info);
+
 private:
     llvm::Function *function = nullptr;
 

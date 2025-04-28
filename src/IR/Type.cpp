@@ -10,7 +10,7 @@ typedef llvm::PointerType *(getPointerTypeFn)(llvm::LLVMContext &, unsigned AS);
 
 template<getTypeFn method>
 Napi::Value getTypeFactory(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !LLVMContext::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::getTypeFactory);
     }
@@ -21,7 +21,7 @@ Napi::Value getTypeFactory(const Napi::CallbackInfo &info) {
 
 template<getIntTypeFn method>
 Napi::Value getIntTypeFactory(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !LLVMContext::IsClassOf(info[0])) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::getIntTypeFactory);
     }
@@ -32,8 +32,8 @@ Napi::Value getIntTypeFactory(const Napi::CallbackInfo &info) {
 
 template<getPointerTypeFn method>
 Napi::Value getPointerTypeFactory(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 0 || !LLVMContext::IsClassOf(info[0]) || argsLen >= 2 && !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::getPointerTypeFactory);
     }
@@ -48,7 +48,7 @@ Napi::Value getPointerTypeFactory(const Napi::CallbackInfo &info) {
 
 void Type::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Object typeID = Napi::Object::New(env);
+    const Napi::Object typeID = Napi::Object::New(env);
     typeID.Set("HalfTyID", Napi::Number::New(env, llvm::Type::TypeID::HalfTyID));
     typeID.Set("BFloatTyID", Napi::Number::New(env, llvm::Type::TypeID::BFloatTyID));
     typeID.Set("FloatTyID", Napi::Number::New(env, llvm::Type::TypeID::FloatTyID));
@@ -69,7 +69,7 @@ void Type::Init(Napi::Env env, Napi::Object &exports) {
     typeID.Set("FixedVectorTyID", Napi::Number::New(env, llvm::Type::TypeID::FixedVectorTyID));
     typeID.Set("ScalableVectorTyID", Napi::Number::New(env, llvm::Type::TypeID::ScalableVectorTyID));
 
-    Napi::Function func = DefineClass(env, "Type", {
+    const Napi::Function func = DefineClass(env, "Type", {
             StaticValue("TypeID", typeID),
             StaticMethod("getVoidTy", &getTypeFactory<&llvm::Type::getVoidTy>),
             StaticMethod("getLabelTy", &getTypeFactory<&llvm::Type::getLabelTy>),
@@ -165,11 +165,11 @@ llvm::Type *Type::Extract(const Napi::Value &value) {
 }
 
 Type::Type(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (!info.IsConstructCall() || info.Length() == 0 || !info[0].IsExternal()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::constructor);
     }
-    auto external = info[0].As<Napi::External<llvm::Type>>();
+    const auto external = info[0].As<Napi::External<llvm::Type>>();
     type = external.Data();
 }
 
@@ -178,7 +178,7 @@ llvm::Type *Type::getLLVMPrimitive() {
 }
 
 Napi::Value Type::getPointerTo(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() >= 1 && !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::getPointerTo);
     }
@@ -195,12 +195,12 @@ Napi::Value Type::getTypeID(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Type::getIntNTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() < 2 || !LLVMContext::IsClassOf(info[0]) || !info[1].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::getIntNTy);
     }
     llvm::LLVMContext &context = LLVMContext::Extract(info[0]);
-    unsigned n = info[1].As<Napi::Number>();
+    const unsigned n = info[1].As<Napi::Number>();
     llvm::IntegerType *type = llvm::Type::getIntNTy(context, n);
     return Type::New(env, type);
 }
@@ -210,11 +210,11 @@ Napi::Value Type::getPrimitiveSizeInBits(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value Type::isIntegerTy(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() > 0 && !info[0].IsNumber()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Type::isIntegerTy);
     }
-    bool result = info.Length() == 0 ? type->isIntegerTy() : type->isIntegerTy(info[0].As<Napi::Number>());
+    const bool result = info.Length() == 0 ? type->isIntegerTy() : type->isIntegerTy(info[0].As<Napi::Number>());
     return Napi::Boolean::New(env, result);
 }
 
@@ -235,8 +235,8 @@ static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
             return type1->getIntegerBitWidth() == type2->getIntegerBitWidth();
  
         case llvm::Type::FunctionTyID: {
-            auto* funcType1 = llvm::cast<llvm::FunctionType>(type1);
-            auto* funcType2 = llvm::cast<llvm::FunctionType>(type2);
+            const auto* funcType1 = llvm::cast<llvm::FunctionType>(type1);
+            const auto* funcType2 = llvm::cast<llvm::FunctionType>(type2);
  
             // Compare return types
             if (!isSameType(funcType1->getReturnType(), funcType2->getReturnType())) {
@@ -259,14 +259,14 @@ static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
  
         case llvm::Type::PointerTyID: {
             // For LLVM 15+ with opaque pointers, compare address spaces
-            auto* ptrType1 = llvm::cast<llvm::PointerType>(type1);
-            auto* ptrType2 = llvm::cast<llvm::PointerType>(type2);
+            const auto* ptrType1 = llvm::cast<llvm::PointerType>(type1);
+            const auto* ptrType2 = llvm::cast<llvm::PointerType>(type2);
             return ptrType1->getAddressSpace() == ptrType2->getAddressSpace();
         }
  
         case llvm::Type::StructTyID: {
-            auto* structType1 = llvm::cast<llvm::StructType>(type1);
-            auto* structType2 = llvm::cast<llvm::StructType>(type2);
+            const auto* structType1 = llvm::cast<llvm::StructType>(type1);
+            const auto* structType2 = llvm::cast<llvm::StructType>(type2);
  
             // Compare number of elements
             if (structType1->getNumElements() != structType2->getNumElements()) {
@@ -286,8 +286,8 @@ static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
             return isSameType(type1->getArrayElementType(), type2->getArrayElementType());
 
             case llvm::Type::FixedVectorTyID: {
-                auto* vecType1 = llvm::cast<llvm::FixedVectorType>(type1);
-                auto* vecType2 = llvm::cast<llvm::FixedVectorType>(type2);
+                const auto* vecType1 = llvm::cast<llvm::FixedVectorType>(type1);
+                const auto* vecType2 = llvm::cast<llvm::FixedVectorType>(type2);
                 
                 if (!isSameType(vecType1->getElementType(), vecType2->getElementType())) {
                     return false;
@@ -297,8 +297,8 @@ static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
             }
     
             case llvm::Type::ScalableVectorTyID: {
-                auto* vecType1 = llvm::cast<llvm::ScalableVectorType>(type1);
-                auto* vecType2 = llvm::cast<llvm::ScalableVectorType>(type2);
+                const auto* vecType1 = llvm::cast<llvm::ScalableVectorType>(type1);
+                const auto* vecType2 = llvm::cast<llvm::ScalableVectorType>(type2);
                 
                 if (!isSameType(vecType1->getElementType(), vecType2->getElementType())) {
                     return false;
@@ -314,8 +314,8 @@ static bool isSameType(llvm::Type* type1, llvm::Type* type2) {
  }
 
 Napi::Value Type::isSameType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (argsLen == 2 && Type::IsClassOf(info[0]) && Type::IsClassOf(info[1])) {
         llvm::Type *type1 = Type::Extract(info[0]);
         llvm::Type *type2 = Type::Extract(info[1]);

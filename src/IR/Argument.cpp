@@ -3,7 +3,7 @@
 
 void Argument::Init(Napi::Env env, Napi::Object &exports) {
     Napi::HandleScope scope(env);
-    Napi::Function func = DefineClass(env, "Argument", {
+    const Napi::Function func = DefineClass(env, "Argument", {
             InstanceMethod("getParent", &Argument::getParent),
             InstanceMethod("getArgNo", &Argument::getArgNo),
             InstanceMethod("getType", &Argument::getType),
@@ -31,8 +31,8 @@ llvm::Argument *Argument::Extract(const Napi::Value &value) {
 }
 
 Argument::Argument(const Napi::CallbackInfo &info) : ObjectWrap(info) {
-    Napi::Env env = info.Env();
-    unsigned argsLen = info.Length();
+    const Napi::Env env = info.Env();
+    const unsigned argsLen = info.Length();
     if (!info.IsConstructCall() ||
         argsLen == 0 ||
         !info[0].IsExternal() && !Type::IsClassOf(info[0]) ||
@@ -42,7 +42,7 @@ Argument::Argument(const Napi::CallbackInfo &info) : ObjectWrap(info) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Argument::constructor);
     }
     if (argsLen >= 1 && info[0].IsExternal()) {
-        auto external = info[0].As<Napi::External<llvm::Argument>>();
+        const auto external = info[0].As<Napi::External<llvm::Argument>>();
         argument = external.Data();
         return;
     }
@@ -67,23 +67,23 @@ llvm::Argument *Argument::getLLVMPrimitive() {
 }
 
 Napi::Value Argument::getParent(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     return Function::New(env, argument->getParent());
 }
 
 Napi::Value Argument::getArgNo(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     return Napi::Number::New(env, argument->getArgNo());
 }
 
 Napi::Value Argument::getType(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     llvm::Type *type = argument->getType();
     return Type::New(env, type);
 }
 
 void Argument::setName(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+    const Napi::Env env = info.Env();
     if (info.Length() == 0 || !info[0].IsString()) {
         throw Napi::TypeError::New(env, ErrMsg::Class::Argument::setName);
     }
